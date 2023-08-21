@@ -45,8 +45,6 @@
     <WarningLevel>4</WarningLevel>
   </PropertyGroup>
   <ItemGroup>
-    <Compile Include="Adornment\ImageTagger.cs" />
-    <Compile Include="Adornment\ImageTaggerProvider.cs" />
     <Compile Include="QuickInfo\ImageQuickInfoSource.cs" />
     <Compile Include="ImageResult.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />

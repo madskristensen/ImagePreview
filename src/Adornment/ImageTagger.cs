@@ -29,7 +29,7 @@ namespace ImagePreview.Classification
                             SnapshotSpan matchSpan = new(span.Snapshot, span.Start + match.Index + match.Length, 0);
                             CrispImage image = new()
                             {
-                                Moniker = KnownMonikers.Image,
+                                Moniker = KnownMonikers.ImageIcon,
                                 Width = 10,
                                 Margin = new System.Windows.Thickness(0, -20, 0, 0),
                             };
