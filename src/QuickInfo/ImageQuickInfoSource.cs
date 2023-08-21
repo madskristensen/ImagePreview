@@ -1,4 +1,5 @@
 ﻿using System.Collections.Generic;
+using System.Text.RegularExpressions;
 using System.Threading;
 using System.Threading.Tasks;
 using System.Windows;
@@ -16,19 +17,20 @@ namespace ImagePreview
     {
         private readonly ITextBuffer _textBuffer;
         private readonly ITextDocument _document;
-        private readonly List<IImageResolver> _resolvers = new()
-        {
-            new HttpImageResolver(),
-            new FileImageResolver(),
-            new Base64Resolver(),
-            new PackResolver(),
-        };
 
         public ImageQuickInfoSource(ITextBuffer textBuffer, ITextDocument document)
         {
             _textBuffer = textBuffer;
             _document = document;
         }
+
+        public static readonly List<IImageResolver> Resolvers = new()
+        {
+            new HttpImageResolver(),
+            new FileImageResolver(),
+            new Base64Resolver(),
+            new PackResolver(),
+        };
 
         public async Task<QuickInfoItem> GetQuickInfoItemAsync(IAsyncQuickInfoSession session, CancellationToken cancellationToken)
         {
@@ -37,30 +39,38 @@ namespace ImagePreview
             ITextSnapshotLine line = _textBuffer.CurrentSnapshot.GetLineFromPosition(position);
             string lineText = line.GetText();
 
-            foreach (IImageResolver resolver in _resolvers)
+            foreach (IImageResolver resolver in Resolvers)
             {
                 try
                 {
-                    if (!resolver.HasPotentialMatch(lineText))
+                    if (resolver.TryGetMatches(lineText, out MatchCollection matches))
                     {
-                        continue;
-                    }
-
-                    ImageResult result = await resolver.GetImageAsync(position - line.Start, lineText, _document.FilePath);
-
-                    if (result != null)
-                    {
-                        await ThreadHelper.JoinableTaskFactory.SwitchToMainThreadAsync();
-                        BitmapSource bitmap = await resolver.GetBitmapAsync(result);
-
-                        if (bitmap != null)
+                        foreach (Match match in matches)
                         {
-                            UIElement element = CreateUiElement(bitmap);
-                            ITrackingSpan span = _textBuffer.CurrentSnapshot.CreateTrackingSpan(line.Start + result.Span.Start, result.Span.Length, SpanTrackingMode.EdgeExclusive);
+                            Span span = new(line.Start + match.Index, match.Length);
 
-                            return new QuickInfoItem(span, element);
+                            if (span.Contains(position))
+                            {
+                                ImageResult result = await resolver.GetImageAsync(span, match.Value, _document.FilePath);
+
+                                if (result?.RawImageString != null)
+                                {
+                                    await ThreadHelper.JoinableTaskFactory.SwitchToMainThreadAsync();
+                                    BitmapSource bitmap = await resolver.GetBitmapAsync(result);
+
+                                    if (bitmap != null)
+                                    {
+                                        UIElement element = CreateUiElement(bitmap);
+                                        ITrackingSpan trackingSpan = _textBuffer.CurrentSnapshot.CreateTrackingSpan(result.Span.Start, result.Span.Length, SpanTrackingMode.EdgeExclusive);
+
+                                        return new QuickInfoItem(trackingSpan, element);
+                                    }
+                                }
+                            }
                         }
                     }
+
+                    
                 }
                 catch (Exception ex)
                 {

@@ -11,7 +11,7 @@ namespace ImagePreview
         public const string Name = "Image Preview";
         public const string Description = @"Shows an image preview when the mouse hovers over any URL or file path string anywhere in any code file. ";
         public const string Language = "en-US";
-        public const string Version = "1.0";
+        public const string Version = "1.0.1000";
         public const string Author = "Mads Kristensen";
         public const string Tags = "";
     }

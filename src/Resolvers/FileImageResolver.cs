@@ -1,5 +1,4 @@
 ﻿using System.IO;
-using System.Net.Cache;
 using System.Text.RegularExpressions;
 using System.Threading.Tasks;
 using System.Windows.Media.Imaging;
@@ -12,31 +11,27 @@ namespace ImagePreview.Resolvers
     {
         private static readonly Regex _regex = new(@"([a-z]:|[\./]+)?([\\\w\.\/\-]+)(\.(png|gif|jpg|jpeg|ico))\b", RegexOptions.IgnoreCase | RegexOptions.Compiled);
 
-        public bool HasPotentialMatch(string lineText)
+        public bool TryGetMatches(string lineText, out MatchCollection matches)
         {
-            return lineText.IndexOf(".png", StringComparison.OrdinalIgnoreCase) > -1 ||
-                   lineText.IndexOf(".gif", StringComparison.OrdinalIgnoreCase) > -1 ||
-                   lineText.IndexOf(".ico", StringComparison.OrdinalIgnoreCase) > -1 ||
-                   lineText.IndexOf(".jpg", StringComparison.OrdinalIgnoreCase) > -1 ||
-                   lineText.IndexOf(".jpeg", StringComparison.OrdinalIgnoreCase) > -1;
-        }
+            matches = null;
 
-        public async Task<ImageResult> GetImageAsync(int cursorPosition, string lineText, string filePath)
-        {
-            MatchCollection matches = _regex.Matches(lineText);
-
-            foreach (Match match in matches)
+            if (lineText.IndexOf(".png", StringComparison.OrdinalIgnoreCase) > -1 ||
+                lineText.IndexOf(".gif", StringComparison.OrdinalIgnoreCase) > -1 ||
+                lineText.IndexOf(".ico", StringComparison.OrdinalIgnoreCase) > -1 ||
+                lineText.IndexOf(".jpg", StringComparison.OrdinalIgnoreCase) > -1 ||
+                lineText.IndexOf(".jpeg", StringComparison.OrdinalIgnoreCase) > -1)
             {
-                Span span = new(match.Index, match.Length);
-
-                if (span.Contains(cursorPosition))
-                {
-                    string absoluteUrl = await GetFullUrlAsync(match.Value, filePath);
-                    return new ImageResult(span, absoluteUrl);
-                }
+                matches = _regex.Matches(lineText);
+                return true;
             }
 
-            return null;
+            return false;
+        }
+
+        public async Task<ImageResult> GetImageAsync(Span span, string value, string filePath)
+        {
+            string absoluteUrl = await GetFullUrlAsync(value, filePath);
+            return new ImageResult(span, absoluteUrl);
         }
 
         public static async Task<string> GetFullUrlAsync(string rawFilePath, string absoluteSourceFile)
@@ -55,11 +50,11 @@ namespace ImagePreview.Resolvers
                 await ThreadHelper.JoinableTaskFactory.SwitchToMainThreadAsync();
                 DTE dte = await VS.GetRequiredServiceAsync<DTE, DTE>();
                 ProjectItem item = dte.Solution.FindProjectItem(absoluteSourceFile);
-                //Project project = await VS.Solutions.GetActiveProjectAsync();
-                //string projectRoot = Path.GetDirectoryName(project.FullPath);
+
                 string projectRoot = Path.GetDirectoryName(item.ContainingProject?.FileName);
                 absolute = Path.GetFullPath(Path.Combine(projectRoot, rawFilePath.TrimStart('/')));
 
+                // Check the wwwroot sub folder which is used in ASP.NET Core projects
                 if (!File.Exists(absolute))
                 {
                     absolute = Path.GetFullPath(Path.Combine(projectRoot, "wwwroot", rawFilePath.TrimStart('/')));
@@ -94,6 +89,12 @@ namespace ImagePreview.Resolvers
             }
 
             return tcs.Task;
+        }
+
+
+        public Task<ImageResult> GetImageAsync(int cursorPosition, string lineText, string filePath)
+        {
+            throw new NotImplementedException();
         }
     }
 }

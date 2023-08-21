@@ -11,27 +11,23 @@ namespace ImagePreview.Resolvers
     {
         private static readonly Regex _regex = new(@";component/[^""]+\.(png|gif|jpg|jpeg|ico)", RegexOptions.IgnoreCase | RegexOptions.Compiled);
 
-        public bool HasPotentialMatch(string lineText)
+        public bool TryGetMatches(string lineText, out MatchCollection matches)
         {
-            return lineText.IndexOf(";component/", StringComparison.OrdinalIgnoreCase) > -1;
-        }
+            matches = null;
 
-        public async Task<ImageResult> GetImageAsync(int cursorPosition, string lineText, string filePath)
-        {
-            MatchCollection matches = _regex.Matches(lineText);
-
-            foreach (Match match in matches)
+            if (lineText.IndexOf(";component/", StringComparison.OrdinalIgnoreCase) > -1)
             {
-                Span span = new(match.Index, match.Length);
-
-                if (span.Contains(cursorPosition))
-                {
-                    string absoluteUrl = await GetFullUrlAsync(match.Value, filePath);
-                    return new ImageResult(span, absoluteUrl);
-                }
+                matches = _regex.Matches(lineText);
+                return true;
             }
 
-            return null;
+            return false;
+        }
+
+        public async Task<ImageResult> GetImageAsync(Span span, string value, string filePath)
+        {
+            string absoluteUrl = await GetFullUrlAsync(value, filePath);
+            return new ImageResult(span, absoluteUrl);
         }
 
         public static async Task<string> GetFullUrlAsync(string rawFilePath, string absoluteSourceFile)

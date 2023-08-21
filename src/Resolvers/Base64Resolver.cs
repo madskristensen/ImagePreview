@@ -11,26 +11,22 @@ namespace ImagePreview.Resolvers
     {
         private static readonly Regex _regex = new(@"data:image/[^;]+;base64,[^\s=]+==?", RegexOptions.IgnoreCase | RegexOptions.Compiled);
 
-        public bool HasPotentialMatch(string lineText)
+        public bool TryGetMatches(string lineText, out MatchCollection matches)
         {
-            return lineText.IndexOf("data:image/", StringComparison.OrdinalIgnoreCase) > -1;
-        }
+            matches = null;
 
-        public Task<ImageResult> GetImageAsync(int cursorPosition, string lineText, string filePath)
-        {
-            MatchCollection matches = _regex.Matches(lineText);
-
-            foreach (Match match in matches)
+            if (lineText.IndexOf("data:image/", StringComparison.OrdinalIgnoreCase) > -1)
             {
-                Span span = new(match.Index, match.Length);
-
-                if (span.Contains(cursorPosition))
-                {
-                    return Task.FromResult(new ImageResult(span, match.Value));
-                }
+                matches = _regex.Matches(lineText);
+                return true;
             }
 
-            return Task.FromResult<ImageResult>(null);
+            return false;
+        }
+
+        public Task<ImageResult> GetImageAsync(Span span, string value, string filePat)
+        {
+            return Task.FromResult(new ImageResult(span, value));
         }
 
         public Task<BitmapSource> GetBitmapAsync(ImageResult result)

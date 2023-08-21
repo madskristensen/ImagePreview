@@ -45,11 +45,14 @@
     <WarningLevel>4</WarningLevel>
   </PropertyGroup>
   <ItemGroup>
-    <Compile Include="ImageQuickInfoSource.cs" />
+    <Compile Include="Classification\ClassificationTypeDefinitions.cs" />
+    <Compile Include="Classification\ImageTagger.cs" />
+    <Compile Include="Classification\ImageTaggerProvider.cs" />
+    <Compile Include="QuickInfo\ImageQuickInfoSource.cs" />
     <Compile Include="ImageResult.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="ImagePreviewPackage.cs" />
-    <Compile Include="ImageQuickInfoProvider.cs" />
+    <Compile Include="QuickInfo\ImageQuickInfoProvider.cs" />
     <Compile Include="Resolvers\Base64Resolver.cs" />
     <Compile Include="Resolvers\PackResolver.cs" />
     <Compile Include="Resolvers\FileImageResolver.cs" />

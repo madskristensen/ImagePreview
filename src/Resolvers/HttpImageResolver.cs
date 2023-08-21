@@ -9,31 +9,27 @@ namespace ImagePreview.Resolvers
     {
         private static readonly Regex _regex = new(@"(https?:|ftp:)?//[\w/\-?=%.\\ ]+\.(png|gif|jpg|jpeg|ico)\b", RegexOptions.IgnoreCase | RegexOptions.Compiled);
 
-        public bool HasPotentialMatch(string lineText)
+        public bool TryGetMatches(string lineText, out MatchCollection matches)
         {
-            return lineText.IndexOf(".png", StringComparison.OrdinalIgnoreCase) > -1 ||
-                   lineText.IndexOf(".gif", StringComparison.OrdinalIgnoreCase) > -1 ||
-                   lineText.IndexOf(".ico", StringComparison.OrdinalIgnoreCase) > -1 ||
-                   lineText.IndexOf(".jpg", StringComparison.OrdinalIgnoreCase) > -1 ||
-                   lineText.IndexOf(".jpeg", StringComparison.OrdinalIgnoreCase) > -1;
-        }
+            matches = null;
 
-        public Task<ImageResult> GetImageAsync(int cursorPosition, string lineText, string filePath)
-        {
-            MatchCollection matches = _regex.Matches(lineText);
-
-            foreach (Match match in matches)
+            if (lineText.IndexOf(".png", StringComparison.OrdinalIgnoreCase) > -1 ||
+                lineText.IndexOf(".gif", StringComparison.OrdinalIgnoreCase) > -1 ||
+                lineText.IndexOf(".ico", StringComparison.OrdinalIgnoreCase) > -1 ||
+                lineText.IndexOf(".jpg", StringComparison.OrdinalIgnoreCase) > -1 ||
+                lineText.IndexOf(".jpeg", StringComparison.OrdinalIgnoreCase) > -1)
             {
-                Span span = new(match.Index, match.Length);
-
-                if (span.Contains(cursorPosition))
-                {
-                    string absoluteUrl = GetFullUrl(match.Value);
-                    return Task.FromResult(new ImageResult(span, absoluteUrl));
-                }
+                matches = _regex.Matches(lineText);
+                return true;
             }
 
-            return Task.FromResult<ImageResult>(null);
+            return false;
+        }
+
+        public Task<ImageResult> GetImageAsync(Span span, string value, string filePat)
+        {
+            string absoluteUrl = GetFullUrl(value);
+            return Task.FromResult(new ImageResult(span, absoluteUrl));
         }
 
         public static string GetFullUrl(string rawFilePath)
