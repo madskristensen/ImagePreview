@@ -47,9 +47,9 @@ namespace ImagePreview.Resolvers
                 return null;
             }
 
-            rawFilePath = rawFilePath.Trim(['\'', '"', '~']);
+            rawFilePath = rawFilePath.Trim('\'', '"', '~');
             rawFilePath = Uri.UnescapeDataString(rawFilePath);
-            string absolute = null;
+            string absolute;
 
             if (rawFilePath.StartsWith("/"))
             {
@@ -68,7 +68,6 @@ namespace ImagePreview.Resolvers
             }
             else
             {
-                string sourceFileDirectory = Path.GetDirectoryName(absoluteSourceFile);
                 absolute = Path.GetFullPath(Path.Combine(Path.GetDirectoryName(absoluteSourceFile), rawFilePath));
             }
 

@@ -45,7 +45,7 @@ namespace ImagePreview.Resolvers
                 return null;
             }
 
-            rawFilePath = rawFilePath.Trim(['\'', '"', '~']);
+            rawFilePath = rawFilePath.Trim('\'', '"', '~');
 
             if (rawFilePath.StartsWith("//", StringComparison.Ordinal))
             {

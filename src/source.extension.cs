@@ -8,8 +8,8 @@ namespace ImagePreview
     internal sealed partial class Vsix
     {
         public const string Id = "ImagePreview.3e89687a-7648-400e-aff7-a4fd71fd0f5c";
-        public const string Name = "Image Previewr";
-        public const string Description = @"Empty VSIX Project.";
+        public const string Name = "Image Preview";
+        public const string Description = @"Shows an image preview when the mouse hovers over any URL or file path string anywhere in any code file. ";
         public const string Language = "en-US";
         public const string Version = "1.0";
         public const string Author = "Mads Kristensen";

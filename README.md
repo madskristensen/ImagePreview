@@ -1,5 +1,5 @@
 [marketplace]: https://marketplace.visualstudio.com/items?itemName=MadsKristensen.ImagePreview
-[vsixgallery]: http://vsixgallery.com/extension/MarkdownEditor2022.2347dc70-1875-4775-bf48-f2b9fdfee8d4/
+[vsixgallery]: http://vsixgallery.com/extension/ImagePreview.3e89687a-7648-400e-aff7-a4fd71fd0f5c/
 [repo]:https://github.com/madskristensen/ImagePreview
 
 # Image Preview for Visual Studio
@@ -11,7 +11,7 @@ or get the [CI build][vsixgallery].
 
 --------------------------------------
 
-More info coming soon...
+Shows an image preview when the mouse hovers over any URL or file path string anywhere in any code file. 
 
 ### How can I help?
 If you enjoy using the extension, please give it a ★★★★★ rating on the [Visual Studio Marketplace][marketplace].
