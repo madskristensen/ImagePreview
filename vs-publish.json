@@ -1,0 +1,14 @@
+{
+  "$schema": "http://json.schemastore.org/vsix-publish",
+  "categories": [ "documentation", "coding" ],
+  "identity": {
+    "internalName": "ImagePreview",
+    "tags": [ "image", "tooltip", "hover", "preview" ]
+  },
+  "assetFiles": [
+    
+  ],
+  "overview": "README.md",
+  "publisher": "MadsKristensen",
+  "repo": "https://github.com/MadsKristensen/ImagePreview"
+}
