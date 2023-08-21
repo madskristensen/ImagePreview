@@ -21,6 +21,7 @@ namespace ImagePreview
             new HttpImageResolver(),
             new FileImageResolver(),
             new Base64Resolver(),
+            new PackResolver(),
         };
 
         public ImageQuickInfoSource(ITextBuffer textBuffer, ITextDocument document)

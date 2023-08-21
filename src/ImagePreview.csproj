@@ -51,6 +51,7 @@
     <Compile Include="ImagePreviewPackage.cs" />
     <Compile Include="ImageQuickInfoProvider.cs" />
     <Compile Include="Resolvers\Base64Resolver.cs" />
+    <Compile Include="Resolvers\PackResolver.cs" />
     <Compile Include="Resolvers\FileImageResolver.cs" />
     <Compile Include="Resolvers\HttpImageResolver.cs" />
     <Compile Include="Resolvers\IImageResolver.cs" />
