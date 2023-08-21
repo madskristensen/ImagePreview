@@ -1,11 +1,16 @@
-﻿using System.Windows.Media.Imaging;
-using Microsoft.VisualStudio.Text;
+﻿using Microsoft.VisualStudio.Text;
 
 namespace ImagePreview
 {
-    internal class ImageResult(Span span, string rawImageString)
+    internal class ImageResult
     {
-        public Span Span { get; } = span;
-        public string RawImageString { get; } = rawImageString;
+        public ImageResult(Span span, string rawImageString)
+        {
+            Span = span;
+            RawImageString = rawImageString;
+        }
+
+        public Span Span { get; }
+        public string RawImageString { get; }
     }
 }

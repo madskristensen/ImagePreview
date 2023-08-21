@@ -12,17 +12,22 @@ using Microsoft.VisualStudio.Text;
 
 namespace ImagePreview
 {
-    internal class ImageQuickInfoSource(ITextBuffer textBuffer, ITextDocument document) : IAsyncQuickInfoSource
+    internal class ImageQuickInfoSource : IAsyncQuickInfoSource
     {
-        private readonly ITextBuffer _textBuffer = textBuffer;
-        private readonly ITextDocument _document = document;
-
+        private readonly ITextBuffer _textBuffer;
+        private readonly ITextDocument _document;
         private readonly List<IImageResolver> _resolvers = new()
         {
             new HttpImageResolver(),
             new FileImageResolver(),
             new Base64Resolver(),
         };
+
+        public ImageQuickInfoSource(ITextBuffer textBuffer, ITextDocument document)
+        {
+            _textBuffer = textBuffer;
+            _document = document;
+        }
 
         public async Task<QuickInfoItem> GetQuickInfoItemAsync(IAsyncQuickInfoSession session, CancellationToken cancellationToken)
         {
