@@ -51,7 +51,7 @@ namespace ImagePreview
                     if (result != null)
                     {
                         await ThreadHelper.JoinableTaskFactory.SwitchToMainThreadAsync();
-                        BitmapImage bitmap = resolver.GetBitmap(result);
+                        BitmapSource bitmap = await resolver.GetBitmapAsync(result);
 
                         if (bitmap != null)
                         {
@@ -71,7 +71,7 @@ namespace ImagePreview
             return null;
         }
 
-        private static UIElement CreateUiElement(BitmapImage bitmap)
+        private static UIElement CreateUiElement(BitmapSource bitmap)
         {
             Image image = new()
             {

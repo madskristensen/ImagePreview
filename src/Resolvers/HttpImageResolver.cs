@@ -1,6 +1,4 @@
-﻿using System.IO;
-using System.Net.Cache;
-using System.Text.RegularExpressions;
+﻿using System.Text.RegularExpressions;
 using System.Threading.Tasks;
 using System.Windows.Media.Imaging;
 using Microsoft.VisualStudio.Text;
@@ -55,21 +53,22 @@ namespace ImagePreview.Resolvers
             return Uri.TryCreate(rawFilePath, UriKind.Absolute, out Uri result) ? result.OriginalString : null;
         }
 
-        public BitmapImage GetBitmap(ImageResult result)
+        public Task<BitmapSource> GetBitmapAsync(ImageResult result)
         {
-            if (string.IsNullOrEmpty(result.RawImageString))
+            TaskCompletionSource<BitmapSource> tcs = new();
+            BitmapImage bitmap = new(new Uri(result.RawImageString));
+
+            if (bitmap.IsDownloading)
             {
-                return null;
+                bitmap.DownloadCompleted += (s, e) => tcs.SetResult(bitmap);
+                bitmap.DownloadFailed += (s, e) => tcs.SetException(e.ErrorException);
+            }
+            else
+            {
+                tcs.SetResult(bitmap);
             }
 
-            BitmapImage bitmap = new();
-            bitmap.BeginInit();
-            bitmap.UriSource = new Uri(result.RawImageString, UriKind.Absolute);
-            bitmap.CacheOption = BitmapCacheOption.OnLoad;
-            bitmap.UriCachePolicy = new RequestCachePolicy(RequestCacheLevel.Default);
-            bitmap.EndInit();
-
-            return bitmap;
+            return tcs.Task;
         }
     }
 }

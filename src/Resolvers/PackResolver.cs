@@ -1,5 +1,4 @@
 ﻿using System.IO;
-using System.Net.Cache;
 using System.Text.RegularExpressions;
 using System.Threading.Tasks;
 using System.Windows.Media.Imaging;
@@ -29,7 +28,6 @@ namespace ImagePreview.Resolvers
                 {
                     string absoluteUrl = await GetFullUrlAsync(match.Value, filePath);
                     return new ImageResult(span, absoluteUrl);
-
                 }
             }
 
@@ -53,21 +51,27 @@ namespace ImagePreview.Resolvers
             return Path.GetFullPath(Path.Combine(projectRoot, rawFilePath.TrimStart('/')));
         }
 
-        public BitmapImage GetBitmap(ImageResult result)
+        public Task<BitmapSource> GetBitmapAsync(ImageResult result)
         {
             if (string.IsNullOrEmpty(result.RawImageString) || !File.Exists(result.RawImageString))
             {
-                return null;
+                return Task.FromResult<BitmapSource>(null);
             }
 
-            BitmapImage bitmap = new();
-            bitmap.BeginInit();
-            bitmap.UriSource = new Uri(result.RawImageString, UriKind.Absolute);
-            bitmap.CacheOption = BitmapCacheOption.OnLoad;
-            bitmap.UriCachePolicy = new RequestCachePolicy(RequestCacheLevel.Default);
-            bitmap.EndInit();
+            TaskCompletionSource<BitmapSource> tcs = new();
+            BitmapImage bitmap = new(new Uri(result.RawImageString));
 
-            return bitmap;
+            if (bitmap.IsDownloading)
+            {
+                bitmap.DownloadCompleted += (s, e) => tcs.SetResult(bitmap);
+                bitmap.DownloadFailed += (s, e) => tcs.SetException(e.ErrorException);
+            }
+            else
+            {
+                tcs.SetResult(bitmap);
+            }
+
+            return tcs.Task;
         }
     }
 }

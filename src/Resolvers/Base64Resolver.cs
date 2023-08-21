@@ -33,11 +33,11 @@ namespace ImagePreview.Resolvers
             return Task.FromResult<ImageResult>(null);
         }
 
-        public BitmapImage GetBitmap(ImageResult result)
+        public Task<BitmapSource> GetBitmapAsync(ImageResult result)
         {
             if (string.IsNullOrEmpty(result.RawImageString))
             {
-                return null;
+                return Task.FromResult<BitmapSource>(null);
             }
 
             int index = result.RawImageString.IndexOf("base64,", StringComparison.Ordinal) + 7;
@@ -47,12 +47,12 @@ namespace ImagePreview.Resolvers
             {
                 BitmapImage bitmap = new();
                 bitmap.BeginInit();
-                bitmap.StreamSource = ms;
                 bitmap.CacheOption = BitmapCacheOption.OnLoad;
                 bitmap.UriCachePolicy = new RequestCachePolicy(RequestCacheLevel.Default);
+                bitmap.StreamSource = ms;
                 bitmap.EndInit();
 
-                return bitmap;
+                return Task.FromResult<BitmapSource>(bitmap);
             }
         }
     }

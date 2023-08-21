@@ -1,4 +1,6 @@
-﻿using Microsoft.VisualStudio.Text;
+﻿using System.Threading.Tasks;
+using System.Windows.Media.Imaging;
+using Microsoft.VisualStudio.Text;
 
 namespace ImagePreview
 {

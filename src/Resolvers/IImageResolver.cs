@@ -9,6 +9,6 @@ namespace ImagePreview.Resolvers
 
         Task<ImageResult> GetImageAsync(int cursorPosition, string lineText, string filePath);
 
-        BitmapImage GetBitmap(ImageResult result);
+        Task<BitmapSource> GetBitmapAsync(ImageResult result);
     }
 }
