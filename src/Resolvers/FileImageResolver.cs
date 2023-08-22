@@ -9,7 +9,7 @@ namespace ImagePreview.Resolvers
 {
     internal class FileImageResolver : IImageResolver
     {
-        private static readonly Regex _regex = new(@"(?<image>([a-z]:|[\./]+)?([\\\w\.\/\-]+)(\.(png|gif|jpg|jpeg|ico)))\b", RegexOptions.IgnoreCase | RegexOptions.Compiled);
+        private static readonly Regex _regex = new(@"(?:^|[\s""'\<\>\(\)])(?<image>([a-z]:[\\\./]+)?([\w\.\/-]+)(\.(png|gif|jpg|jpeg|ico)))\b", RegexOptions.IgnoreCase | RegexOptions.Compiled);
 
         public bool TryGetMatches(string lineText, out MatchCollection matches)
         {

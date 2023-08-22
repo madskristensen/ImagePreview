@@ -11,7 +11,9 @@ or get the [CI build][vsixgallery].
 
 --------------------------------------
 
-Shows an image preview when the mouse hovers over any URL or file path string anywhere in any code file. 
+Shows an image preview when the mouse hover over any URL or file path string anywhere in any text file. 
+
+!![Image Preview](art/animation.gif)
 
 ### How can I help?
 If you enjoy using the extension, please give it a ★★★★★ rating on the [Visual Studio Marketplace][marketplace].

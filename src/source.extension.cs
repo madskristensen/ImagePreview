@@ -9,7 +9,7 @@ namespace ImagePreview
     {
         public const string Id = "ImagePreview.3e89687a-7648-400e-aff7-a4fd71fd0f5c";
         public const string Name = "Image Preview";
-        public const string Description = @"Shows an image preview when the mouse hovers over any URL or file path string anywhere in any code file. ";
+        public const string Description = @"Shows an image preview when the mouse hover over any URL or file path string anywhere in any text file.";
         public const string Language = "en-US";
         public const string Version = "1.0.1001";
         public const string Author = "Mads Kristensen";

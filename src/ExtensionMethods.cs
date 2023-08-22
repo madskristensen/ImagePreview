@@ -4,7 +4,7 @@ namespace ImagePreview
 {
     internal static class ExtensionMethods
     {
-        private static readonly string[] _sizeSuffixes = ["bytes", "KB", "MB", "GB", "TB", "PB", "EB", "ZB", "YB"];
+        private static readonly string[] _sizeSuffixes = new[] { "bytes", "KB", "MB", "GB", "TB", "PB", "EB", "ZB", "YB" };
 
         // From https://stackoverflow.com/a/14488941
         public static string ToFileSize(this long value, int decimalPlaces = 1)

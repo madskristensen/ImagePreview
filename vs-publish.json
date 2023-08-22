@@ -6,7 +6,10 @@
     "tags": [ "image", "tooltip", "hover", "preview" ]
   },
   "assetFiles": [
-    
+    {
+      "pathOnDisk": "art/animation.gif",
+      "targetPath": "art/animation.gif"
+    }    
   ],
   "overview": "README.md",
   "publisher": "MadsKristensen",
