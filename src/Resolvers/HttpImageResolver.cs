@@ -1,4 +1,7 @@
-﻿using System.Text.RegularExpressions;
+﻿using System.IO;
+using System.Net.Cache;
+using System.Net.Http;
+using System.Text.RegularExpressions;
 using System.Threading.Tasks;
 using System.Windows.Media.Imaging;
 using Microsoft.VisualStudio.Text;
@@ -49,22 +52,25 @@ namespace ImagePreview.Resolvers
             return Uri.TryCreate(rawFilePath, UriKind.Absolute, out Uri result) ? result.OriginalString : null;
         }
 
-        public Task<BitmapSource> GetBitmapAsync(ImageResult result)
+        public async Task<BitmapSource> GetBitmapAsync(ImageResult result)
         {
-            TaskCompletionSource<BitmapSource> tcs = new();
-            BitmapImage bitmap = new(new Uri(result.RawImageString));
-
-            if (bitmap.IsDownloading)
+            using (HttpClient client = new())
             {
-                bitmap.DownloadCompleted += (s, e) => tcs.SetResult(bitmap);
-                bitmap.DownloadFailed += (s, e) => tcs.SetException(e.ErrorException);
-            }
-            else
-            {
-                tcs.SetResult(bitmap);
-            }
+                byte[] imageBytes = await client.GetByteArrayAsync(result.RawImageString);
+                result.SetFileSize(imageBytes.Length);
 
-            return tcs.Task;
+                using (MemoryStream ms = new(imageBytes, 0, imageBytes.Length))
+                {
+                    BitmapImage bitmap = new();
+                    bitmap.BeginInit();
+                    bitmap.CacheOption = BitmapCacheOption.OnLoad;
+                    bitmap.UriCachePolicy = new RequestCachePolicy(RequestCacheLevel.Default);
+                    bitmap.StreamSource = ms;
+                    bitmap.EndInit();
+
+                    return bitmap;
+                }
+            }
         }
     }
 }

@@ -83,7 +83,7 @@ namespace ImagePreview
 
                 if (bitmap != null)
                 {
-                    UIElement element = CreateUiElement(bitmap);
+                    UIElement element = CreateUiElement(bitmap, result);
                     return new QuickInfoItem(trackingSpan, element);
                 }
             }
@@ -91,7 +91,7 @@ namespace ImagePreview
             return new QuickInfoItem(trackingSpan, "Could not resolve image for preview");
         }
 
-        private static UIElement CreateUiElement(BitmapSource bitmap)
+        private static UIElement CreateUiElement(BitmapSource bitmap, ImageResult result)
         {
             Image image = new()
             {
@@ -102,7 +102,7 @@ namespace ImagePreview
                 StretchDirection = StretchDirection.DownOnly
             };
 
-            Label label = new() { Content = $"{Math.Round(bitmap.Width)}x{Math.Round(bitmap.Height)}" };
+            Label label = new() { Content = $"{Math.Round(bitmap.Width)}x{Math.Round(bitmap.Height)} ({result.FileSize.ToFileSize(2)})" };
             label.SetResourceReference(TextBlock.ForegroundProperty, EnvironmentColors.ComboBoxFocusedTextBrushKey);
 
             StackPanel panel = new() { Orientation = Orientation.Vertical };

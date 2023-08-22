@@ -75,6 +75,8 @@ namespace ImagePreview.Resolvers
                 return Task.FromResult<BitmapSource>(null);
             }
 
+            result.SetFileSize(new FileInfo(result.RawImageString).Length);
+
             TaskCompletionSource<BitmapSource> tcs = new();
             BitmapImage bitmap = new(new Uri(result.RawImageString));
 

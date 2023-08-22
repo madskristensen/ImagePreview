@@ -37,6 +37,7 @@ namespace ImagePreview.Resolvers
             }
 
             byte[] imageBytes = Convert.FromBase64String(result.RawImageString);
+            result.SetFileSize(imageBytes.Length);
 
             using (MemoryStream ms = new(imageBytes, 0, imageBytes.Length))
             {

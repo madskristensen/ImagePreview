@@ -28,6 +28,11 @@ namespace ImagePreview
                 adjustedSize /= 1024;
             }
 
+            if (value < 1024)
+            {
+                return string.Format("{0:n0} {1}", adjustedSize, _sizeSuffixes[mag]);
+            }
+
             return string.Format("{0:n" + decimalPlaces + "} {1}", adjustedSize, _sizeSuffixes[mag]);
         }
 
