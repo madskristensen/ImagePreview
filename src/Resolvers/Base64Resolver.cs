@@ -9,7 +9,7 @@ namespace ImagePreview.Resolvers
 {
     internal class Base64Resolver : IImageResolver
     {
-        private static readonly Regex _regex = new(@"data:image/[^;]+;base64,[^\s=]+==?", RegexOptions.IgnoreCase | RegexOptions.Compiled);
+        private static readonly Regex _regex = new(@"data:image/[^;]+;base64,(?<image>[^\s=]+==?)", RegexOptions.IgnoreCase | RegexOptions.Compiled);
 
         public bool TryGetMatches(string lineText, out MatchCollection matches)
         {
@@ -36,8 +36,7 @@ namespace ImagePreview.Resolvers
                 return Task.FromResult<BitmapSource>(null);
             }
 
-            int index = result.RawImageString.IndexOf("base64,", StringComparison.Ordinal) + 7;
-            byte[] imageBytes = Convert.FromBase64String(result.RawImageString.Substring(index));
+            byte[] imageBytes = Convert.FromBase64String(result.RawImageString);
 
             using (MemoryStream ms = new(imageBytes, 0, imageBytes.Length))
             {

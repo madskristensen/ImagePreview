@@ -9,7 +9,7 @@ namespace ImagePreview.Resolvers
 {
     internal class PackResolver : IImageResolver
     {
-        private static readonly Regex _regex = new(@";component/[^""]+\.(png|gif|jpg|jpeg|ico)", RegexOptions.IgnoreCase | RegexOptions.Compiled);
+        private static readonly Regex _regex = new(@"(pack://application:[^/]+)?/[\w]+;component/(?<image>[^""]+\.(png|gif|jpg|jpeg|ico))\b", RegexOptions.IgnoreCase | RegexOptions.Compiled);
 
         public bool TryGetMatches(string lineText, out MatchCollection matches)
         {
@@ -37,13 +37,11 @@ namespace ImagePreview.Resolvers
                 return null;
             }
 
-            rawFilePath = rawFilePath.Substring(10);
-
             await ThreadHelper.JoinableTaskFactory.SwitchToMainThreadAsync();
             DTE dte = await VS.GetRequiredServiceAsync<DTE, DTE>();
             ProjectItem item = dte.Solution.FindProjectItem(absoluteSourceFile);
 
-            string projectRoot = Path.GetDirectoryName(item.ContainingProject?.FileName);
+            string projectRoot = item.ContainingProject?.GetRootFolder();
             return Path.GetFullPath(Path.Combine(projectRoot, rawFilePath.TrimStart('/')));
         }
 

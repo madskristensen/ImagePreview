@@ -7,21 +7,13 @@ namespace ImagePreview
 {
     [Export(typeof(IAsyncQuickInfoSourceProvider))]
     [Name(nameof(ImageQuickInfoProvider))]
-    [ContentType("any")]
+    [ContentType("text")]
     [Order]
     internal class ImageQuickInfoProvider : IAsyncQuickInfoSourceProvider
     {
-        [Import]
-        internal ITextDocumentFactoryService _documentService = null;
-
         public IAsyncQuickInfoSource TryCreateQuickInfoSource(ITextBuffer textBuffer)
         {
-            if (_documentService.TryGetTextDocument(textBuffer, out ITextDocument document))
-            {
-                return textBuffer.Properties.GetOrCreateSingletonProperty(() => new ImageQuickInfoSource(textBuffer, document));
-            }
-
-            return null;
+            return textBuffer.Properties.GetOrCreateSingletonProperty(() => new ImageQuickInfoSource(textBuffer));
         }
     }
 }

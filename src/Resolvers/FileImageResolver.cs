@@ -9,7 +9,7 @@ namespace ImagePreview.Resolvers
 {
     internal class FileImageResolver : IImageResolver
     {
-        private static readonly Regex _regex = new(@"([a-z]:|[\./]+)?([\\\w\.\/\-]+)(\.(png|gif|jpg|jpeg|ico))\b", RegexOptions.IgnoreCase | RegexOptions.Compiled);
+        private static readonly Regex _regex = new(@"(?<image>([a-z]:|[\./]+)?([\\\w\.\/\-]+)(\.(png|gif|jpg|jpeg|ico)))\b", RegexOptions.IgnoreCase | RegexOptions.Compiled);
 
         public bool TryGetMatches(string lineText, out MatchCollection matches)
         {
@@ -51,7 +51,7 @@ namespace ImagePreview.Resolvers
                 DTE dte = await VS.GetRequiredServiceAsync<DTE, DTE>();
                 ProjectItem item = dte.Solution.FindProjectItem(absoluteSourceFile);
 
-                string projectRoot = Path.GetDirectoryName(item.ContainingProject?.FileName);
+                string projectRoot = item.ContainingProject?.GetRootFolder();
                 absolute = Path.GetFullPath(Path.Combine(projectRoot, rawFilePath.TrimStart('/')));
 
                 // Check the wwwroot sub folder which is used in ASP.NET Core projects
@@ -89,12 +89,6 @@ namespace ImagePreview.Resolvers
             }
 
             return tcs.Task;
-        }
-
-
-        public Task<ImageResult> GetImageAsync(int cursorPosition, string lineText, string filePath)
-        {
-            throw new NotImplementedException();
         }
     }
 }
