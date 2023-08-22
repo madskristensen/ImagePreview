@@ -6,14 +6,13 @@
 
 [![Build](https://github.com/madskristensen/MarkdownEditor2022/actions/workflows/build.yaml/badge.svg)](https://github.com/madskristensen/MarkdownEditor2022/actions/workflows/build.yaml)
 
-Download this extension from the [Visual Studio Marketplace][marketplace]
-or get the [CI build][vsixgallery].
+Download this extension from the [Visual Studio Marketplace][marketplace] or get the [CI build][vsixgallery].
 
---------------------------------------
+> This extension was created as a response to the Visual Studio feature request [An option to preview images when they are hovered](https://developercommunity.visualstudio.com/t/An-option-to-preview-images-when-they-ar/10419941).
 
 Shows an image preview when the mouse hover over any URL or file path string anywhere in any text file. 
 
-!![Image Preview](art/animation.gif)
+![Image Preview](art/animation.gif)
 
 ### How can I help?
 If you enjoy using the extension, please give it a ★★★★★ rating on the [Visual Studio Marketplace][marketplace].
