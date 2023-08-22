@@ -10,7 +10,7 @@ Download this extension from the [Visual Studio Marketplace][marketplace] or get
 
 > This extension was created as a response to the Visual Studio feature request [An option to preview images when they are hovered](https://developercommunity.visualstudio.com/t/An-option-to-preview-images-when-they-ar/10419941).
 
-Shows an image preview when the mouse hover over any URL or file path string anywhere in any text file. 
+Shows an image preview when the mouse hovers over any URL or file path string anywhere in any text file. 
 
 Supported image references:
 
