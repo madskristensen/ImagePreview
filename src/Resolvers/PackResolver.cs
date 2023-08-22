@@ -24,10 +24,10 @@ namespace ImagePreview.Resolvers
             return false;
         }
 
-        public async Task<ImageResult> GetImageAsync(Span span, string value, string filePath)
+        public async Task<ImageReference> GetImageAsync(Span span, string value, string filePath)
         {
             string absoluteUrl = await GetFullUrlAsync(value, filePath);
-            return new ImageResult(span, absoluteUrl);
+            return new ImageReference(span, absoluteUrl);
         }
 
         public static async Task<string> GetFullUrlAsync(string rawFilePath, string absoluteSourceFile)
@@ -45,7 +45,7 @@ namespace ImagePreview.Resolvers
             return Path.GetFullPath(Path.Combine(projectRoot, rawFilePath.TrimStart('/')));
         }
 
-        public Task<BitmapSource> GetBitmapAsync(ImageResult result)
+        public Task<BitmapSource> GetBitmapAsync(ImageReference result)
         {
             if (string.IsNullOrEmpty(result.RawImageString) || !File.Exists(result.RawImageString))
             {

@@ -24,12 +24,12 @@ namespace ImagePreview.Resolvers
             return false;
         }
 
-        public Task<ImageResult> GetImageAsync(Span span, string value, string filePat)
+        public Task<ImageReference> GetImageAsync(Span span, string value, string filePat)
         {
-            return Task.FromResult(new ImageResult(span, value));
+            return Task.FromResult(new ImageReference(span, value));
         }
 
-        public Task<BitmapSource> GetBitmapAsync(ImageResult result)
+        public Task<BitmapSource> GetBitmapAsync(ImageReference result)
         {
             if (string.IsNullOrEmpty(result.RawImageString))
             {

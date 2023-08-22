@@ -36,6 +36,11 @@ namespace ImagePreview
             return string.Format("{0:n" + decimalPlaces + "} {1}", adjustedSize, _sizeSuffixes[mag]);
         }
 
+        /// <summary>
+        /// Retrieves the root folder of the specified project.
+        /// </summary>
+        /// <param name="project">The project to retrieve the root folder for.</param>
+        /// <returns>The root folder path of the project.</returns>
         public static string GetRootFolder(this EnvDTE.Project project)
         {
             ThreadHelper.ThrowIfNotOnUIThread();

@@ -74,7 +74,7 @@ namespace ImagePreview
         private async Task<QuickInfoItem> GenerateQuickInfoAsync(IImageResolver resolver, Match match, Span span)
         {
             await ThreadHelper.JoinableTaskFactory.SwitchToMainThreadAsync();
-            ImageResult result = await resolver.GetImageAsync(span, match.Groups["image"].Value.Trim(), _textBuffer.GetFileName());
+            ImageReference result = await resolver.GetImageAsync(span, match.Groups["image"].Value.Trim(), _textBuffer.GetFileName());
             ITrackingSpan trackingSpan = _textBuffer.CurrentSnapshot.CreateTrackingSpan(result.Span.Start, result.Span.Length, SpanTrackingMode.EdgeExclusive);
 
             if (result?.RawImageString != null)
@@ -91,7 +91,7 @@ namespace ImagePreview
             return new QuickInfoItem(trackingSpan, "Could not resolve image for preview");
         }
 
-        private static UIElement CreateUiElement(BitmapSource bitmap, ImageResult result)
+        private static UIElement CreateUiElement(BitmapSource bitmap, ImageReference result)
         {
             Image image = new()
             {

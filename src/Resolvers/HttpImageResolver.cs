@@ -29,10 +29,10 @@ namespace ImagePreview.Resolvers
             return false;
         }
 
-        public Task<ImageResult> GetImageAsync(Span span, string value, string filePat)
+        public Task<ImageReference> GetImageAsync(Span span, string value, string filePat)
         {
             string absoluteUrl = GetFullUrl(value);
-            return Task.FromResult(new ImageResult(span, absoluteUrl));
+            return Task.FromResult(new ImageReference(span, absoluteUrl));
         }
 
         public static string GetFullUrl(string rawFilePath)
@@ -52,7 +52,7 @@ namespace ImagePreview.Resolvers
             return Uri.TryCreate(rawFilePath, UriKind.Absolute, out Uri result) ? result.OriginalString : null;
         }
 
-        public async Task<BitmapSource> GetBitmapAsync(ImageResult result)
+        public async Task<BitmapSource> GetBitmapAsync(ImageReference result)
         {
             using (HttpClient client = new())
             {
