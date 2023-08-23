@@ -61,5 +61,19 @@ namespace ImagePreview.Test
             Assert.AreEqual(pngPath, result.RawImageString);
             Assert.AreEqual(span, result.Span);
         }
+
+
+        [DataTestMethod]
+        [DataRow("test.png", 266)]
+        [DataRow("test.svg", 1553)]
+        public async Task GetBitmapAsync(string file, long fileSize)
+        {
+            string png = Path.Combine(_folder.FullName, file);
+            ImageReference result = new ImageReference(new Span(), png);
+            System.Windows.Media.Imaging.BitmapSource bitmap = await _resolver.GetBitmapAsync(result);
+
+            Assert.IsNotNull(bitmap);
+            Assert.AreEqual(fileSize, result.FileSize);
+        }
     }
 }

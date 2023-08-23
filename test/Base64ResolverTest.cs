@@ -1,5 +1,7 @@
-﻿using ImagePreview.Resolvers;
+﻿using System.Threading.Tasks;
+using ImagePreview.Resolvers;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
+using Microsoft.VisualStudio.Text;
 
 namespace ImagePreview.Test
 {
@@ -23,6 +25,16 @@ namespace ImagePreview.Test
 
             Assert.AreEqual(1, matches.Count);
             Assert.AreEqual(match, matches[0].Groups["image"].Value);
+        }
+
+        [TestMethod]
+        public async Task GetBitmapAsync()
+        {
+            ImageReference result = new ImageReference(new Span(), "R0lGODlhAQABAIAAAAAAAP///yH5BAEAAAAALAAAAAABAAEAAAIBRAA7");
+            System.Windows.Media.Imaging.BitmapSource bitmap = await _resolver.GetBitmapAsync(result);
+
+            Assert.IsNotNull(bitmap);
+            Assert.AreEqual(42, result.FileSize);
         }
     }
 }
