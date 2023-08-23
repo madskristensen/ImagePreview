@@ -34,9 +34,11 @@ namespace ImagePreview.Test
 
         [DataTestMethod]
         [DataRow(@"c:\test.png", @"c:\test.png")]
+        [DataRow(@"c:/test.png", @"c:/test.png")]
         [DataRow(@"d:\test.png<", @"d:\test.png")]
         [DataRow(@"D:\test.png)", @"D:\test.png")]
         [DataRow(@"c:\folder\test.png]", @"c:\folder\test.png")]
+        [DataRow(@"c:\folder/test.png]", @"c:\folder/test.png")]
         public void Absolute(string path, string match)
         {
             _resolver.TryGetMatches(path, out System.Text.RegularExpressions.MatchCollection matches);
