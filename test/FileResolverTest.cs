@@ -1,6 +1,8 @@
 ﻿using System.IO;
+using System.Threading.Tasks;
 using ImagePreview.Resolvers;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
+using Microsoft.VisualStudio.Text;
 
 namespace ImagePreview.Test
 {
@@ -8,7 +10,7 @@ namespace ImagePreview.Test
     public class FileResolverTest
     {
         private FileImageResolver _resolver;
-        //private readonly DirectoryInfo _folder = new DirectoryInfo("../../Images/");
+        private readonly DirectoryInfo _folder = new DirectoryInfo("../../Images/");
 
         [TestInitialize]
         public void Setup()
@@ -18,6 +20,7 @@ namespace ImagePreview.Test
 
         [DataTestMethod]
         [DataRow("foo.png", "foo.png")]
+        [DataRow("~/foo.png", "/foo.png")]
         [DataRow("(foo.png)", "foo.png")]
         [DataRow(">foo.png<", "foo.png")]
         [DataRow("[foo.png]", "foo.png")]
@@ -45,6 +48,18 @@ namespace ImagePreview.Test
 
             Assert.AreEqual(1, matches.Count);
             Assert.AreEqual(match, matches[0].Groups["image"].Value);
+        }
+
+        [TestMethod]
+        public async Task GetImageAsync()
+        {
+            Span span = new Span(11, 8);
+            string codeFile = Path.Combine(_folder.FullName, "test.cs");
+            ImageReference result = await _resolver.GetImageAsync(span, "test.png", codeFile);
+
+            string pngPath = Path.ChangeExtension(codeFile, ".png");
+            Assert.AreEqual(pngPath, result.RawImageString);
+            Assert.AreEqual(span, result.Span);
         }
     }
 }

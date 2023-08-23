@@ -37,7 +37,7 @@ namespace ImagePreview.Resolvers
             return Task.FromResult(new ImageReference(span, absoluteUrl));
         }
 
-        public static string GetFullUrl(string rawFilePath)
+        private static string GetFullUrl(string rawFilePath)
         {
             if (string.IsNullOrEmpty(rawFilePath))
             {

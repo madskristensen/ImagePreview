@@ -1,4 +1,5 @@
 ﻿using System.IO;
+using System.Threading.Tasks;
 using ImagePreview.Resolvers;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
 

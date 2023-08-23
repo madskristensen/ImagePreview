@@ -110,7 +110,7 @@ namespace ImagePreview
             panel.Children.Add(image);
             panel.Children.Add(label);
 
-            _prompt.PromptAsync().FireAndForget();
+            _prompt.RegisterSuccessfulUsage();
 
             return panel;
         }
