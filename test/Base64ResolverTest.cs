@@ -28,13 +28,23 @@ namespace ImagePreview.Test
         }
 
         [TestMethod]
+        public async Task GetImageReferenceAsync()
+        {
+            string base64 = "data:image/gif;base64,R0lGODlhAQABAAAAACH5BAEKAAEALAAAAAABAAEAAAICTAEAOw==";
+            Span span = new Span(0, base64.Length);
+            ImageReference reference = await _resolver.GetImageReferenceAsync(span, base64, null);
+
+            Assert.IsNotNull(reference);
+            Assert.AreEqual(74, reference.FileSize);
+        }
+
+        [TestMethod]
         public async Task GetBitmapAsync()
         {
             ImageReference result = new ImageReference(new Span(), "R0lGODlhAQABAIAAAAAAAP///yH5BAEAAAAALAAAAAABAAEAAAIBRAA7");
             System.Windows.Media.Imaging.BitmapSource bitmap = await _resolver.GetBitmapAsync(result);
 
             Assert.IsNotNull(bitmap);
-            Assert.AreEqual(42, result.FileSize);
         }
     }
 }

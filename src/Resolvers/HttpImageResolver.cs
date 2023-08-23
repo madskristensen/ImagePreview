@@ -31,7 +31,7 @@ namespace ImagePreview.Resolvers
             return false;
         }
 
-        public Task<ImageReference> GetImageAsync(Span span, string value, string filePath)
+        public Task<ImageReference> GetImageReferenceAsync(Span span, string value, string filePath)
         {
             string absoluteUrl = GetFullUrl(value);
             return Task.FromResult(new ImageReference(span, absoluteUrl));

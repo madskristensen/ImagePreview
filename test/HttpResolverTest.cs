@@ -44,7 +44,7 @@ namespace ImagePreview.Test
             _resolver.TryGetMatches(path, out System.Text.RegularExpressions.MatchCollection matches);
 
             Assert.AreEqual(1, matches.Count);
-            Assert.AreEqual(match, matches[0].Groups["image"].Value);
+            Assert.AreEqual(match, matches[0].Groups["png'"].Value);
         }
 
         [DataTestMethod]
@@ -64,10 +64,10 @@ namespace ImagePreview.Test
         }
 
         [TestMethod]
-        public async Task GetImageAsync()
+        public async Task GetImageReferenceAsync()
         {
             Span span = new Span(11, 8);
-            ImageReference result = await _resolver.GetImageAsync(span, "//foo.com/file.png", null);
+            ImageReference result = await _resolver.GetImageReferenceAsync(span, "//foo.com/file.png", null);
 
             Assert.AreEqual("http://foo.com/file.png", result.RawImageString);
             Assert.AreEqual(span, result.Span);

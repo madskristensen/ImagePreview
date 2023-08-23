@@ -51,11 +51,11 @@ namespace ImagePreview.Test
         }
 
         [TestMethod]
-        public async Task GetImageAsync()
+        public async Task GetImageReferenceAsync()
         {
             Span span = new Span(11, 8);
             string codeFile = Path.Combine(_folder.FullName, "test.cs");
-            ImageReference result = await _resolver.GetImageAsync(span, "test.png", codeFile);
+            ImageReference result = await _resolver.GetImageReferenceAsync(span, "test.png", codeFile);
 
             string pngPath = Path.ChangeExtension(codeFile, ".png");
             Assert.AreEqual(pngPath, result.RawImageString);

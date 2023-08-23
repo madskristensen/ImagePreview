@@ -24,9 +24,11 @@ namespace ImagePreview.Resolvers
             return false;
         }
 
-        public Task<ImageReference> GetImageAsync(Span span, string value, string filePath)
+        public Task<ImageReference> GetImageReferenceAsync(Span span, string value, string filePath)
         {
-            return Task.FromResult(new ImageReference(span, value));
+            ImageReference reference = new(span, value);
+            reference.SetFileSize(span.Length);
+            return Task.FromResult(reference);
         }
 
         public Task<BitmapSource> GetBitmapAsync(ImageReference result)
@@ -37,7 +39,6 @@ namespace ImagePreview.Resolvers
             }
 
             byte[] imageBytes = Convert.FromBase64String(result.RawImageString);
-            result.SetFileSize(imageBytes.Length);
 
             using (MemoryStream ms = new(imageBytes, 0, imageBytes.Length))
             {

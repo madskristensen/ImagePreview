@@ -25,7 +25,7 @@ namespace ImagePreview.Resolvers
         /// <param name="value">The file path reference extracted from the matched string.</param>
         /// <param name="filePat">The file path of the source.</param>
         /// <returns>Returns the metadata information of the image file picked up.</returns>
-        Task<ImageReference> GetImageAsync(Span span, string value, string filePat);
+        Task<ImageReference> GetImageReferenceAsync(Span span, string value, string filePat);
 
         /// <summary>
         /// Asynchronously decodes the image metadata into a <see cref="BitmapSource"/> object.
