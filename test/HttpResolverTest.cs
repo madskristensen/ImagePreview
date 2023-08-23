@@ -1,5 +1,4 @@
-﻿using System.IO;
-using System.Threading.Tasks;
+﻿using System.Threading.Tasks;
 using ImagePreview.Resolvers;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
 using Microsoft.VisualStudio.Text;
@@ -44,7 +43,7 @@ namespace ImagePreview.Test
             _resolver.TryGetMatches(path, out System.Text.RegularExpressions.MatchCollection matches);
 
             Assert.AreEqual(1, matches.Count);
-            Assert.AreEqual(match, matches[0].Groups["png'"].Value);
+            Assert.AreEqual(match, matches[0].Groups["image"].Value);
         }
 
         [DataTestMethod]
