@@ -16,6 +16,7 @@ namespace ImagePreview
     internal class ImageQuickInfoSource : IAsyncQuickInfoSource
     {
         private readonly ITextBuffer _textBuffer;
+        private static readonly RatingPrompt _prompt = new("MadsKristensen.ImagePreview", Vsix.Name, General.Instance, 2);
 
         public ImageQuickInfoSource(ITextBuffer textBuffer)
         {
@@ -108,6 +109,9 @@ namespace ImagePreview
             StackPanel panel = new() { Orientation = Orientation.Vertical };
             panel.Children.Add(image);
             panel.Children.Add(label);
+
+            _prompt.PromptAsync().FireAndForget();
+
             return panel;
         }
 
