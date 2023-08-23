@@ -3,13 +3,14 @@ using System.Text.RegularExpressions;
 using System.Threading.Tasks;
 using System.Windows.Media.Imaging;
 using EnvDTE;
+using ImagePreview.Helpers;
 using Microsoft.VisualStudio.Text;
 
 namespace ImagePreview.Resolvers
 {
     internal class FileImageResolver : IImageResolver
     {
-        private static readonly Regex _regex = new(@"(?:^|[\s""'\<\>\(\)])(?<image>([a-z]:[\\\./]+)?([\w\.\/-]+)(\.(png|gif|jpg|jpeg|ico)))\b", RegexOptions.IgnoreCase | RegexOptions.Compiled);
+        private static readonly Regex _regex = new(@"(?:^|[\s""'\<\>\(\)])(?<image>([a-z]:[\\\./]+)?([\w\.\/-]+)(\.(png|gif|jpg|jpeg|ico|svg)))\b", RegexOptions.IgnoreCase | RegexOptions.Compiled);
 
         public bool TryGetMatches(string lineText, out MatchCollection matches)
         {
@@ -18,6 +19,7 @@ namespace ImagePreview.Resolvers
             if (lineText.IndexOf(".png", StringComparison.OrdinalIgnoreCase) > -1 ||
                 lineText.IndexOf(".gif", StringComparison.OrdinalIgnoreCase) > -1 ||
                 lineText.IndexOf(".ico", StringComparison.OrdinalIgnoreCase) > -1 ||
+                lineText.IndexOf(".svg", StringComparison.OrdinalIgnoreCase) > -1 ||
                 lineText.IndexOf(".jpg", StringComparison.OrdinalIgnoreCase) > -1 ||
                 lineText.IndexOf(".jpeg", StringComparison.OrdinalIgnoreCase) > -1)
             {
@@ -75,19 +77,27 @@ namespace ImagePreview.Resolvers
                 return Task.FromResult<BitmapSource>(null);
             }
 
+            TaskCompletionSource<BitmapSource> tcs = new();
+
             result.SetFileSize(new FileInfo(result.RawImageString).Length);
 
-            TaskCompletionSource<BitmapSource> tcs = new();
-            BitmapImage bitmap = new(new Uri(result.RawImageString));
-
-            if (bitmap.IsDownloading)
+            if (result.RawImageString.EndsWith(".svg", StringComparison.OrdinalIgnoreCase))
             {
-                bitmap.DownloadCompleted += (s, e) => tcs.SetResult(bitmap);
-                bitmap.DownloadFailed += (s, e) => tcs.SetException(e.ErrorException);
+                tcs.SetResult(SvgHelper.GetBitmapFromSvgFile(result.RawImageString));
             }
             else
             {
-                tcs.SetResult(bitmap);
+                BitmapImage bitmap = new(new Uri(result.RawImageString));
+
+                if (bitmap.IsDownloading)
+                {
+                    bitmap.DownloadCompleted += (s, e) => tcs.SetResult(bitmap);
+                    bitmap.DownloadFailed += (s, e) => tcs.SetException(e.ErrorException);
+                }
+                else
+                {
+                    tcs.SetResult(bitmap);
+                }
             }
 
             return tcs.Task;

@@ -28,12 +28,9 @@ namespace ImagePreview
                 adjustedSize /= 1024;
             }
 
-            if (value < 1024)
-            {
-                return string.Format("{0:n0} {1}", adjustedSize, _sizeSuffixes[mag]);
-            }
-
-            return string.Format("{0:n" + decimalPlaces + "} {1}", adjustedSize, _sizeSuffixes[mag]);
+            return value < 1024
+                ? string.Format("{0:n0} {1}", adjustedSize, _sizeSuffixes[mag])
+                : string.Format("{0:n" + decimalPlaces + "} {1}", adjustedSize, _sizeSuffixes[mag]);
         }
 
         /// <summary>
@@ -80,19 +77,17 @@ namespace ImagePreview
                 }
             }
 
-            if (string.IsNullOrEmpty(fullPath))
-            {
-                return File.Exists(project.FullName) ? Path.GetDirectoryName(project.FullName) : null;
-            }
-
-            if (Directory.Exists(fullPath))
-            {
-                return fullPath;
-            }
-
-            return File.Exists(fullPath) ? Path.GetDirectoryName(fullPath) : null;
+            return string.IsNullOrEmpty(fullPath)
+                ? File.Exists(project.FullName) ? Path.GetDirectoryName(project.FullName) : null
+                : Directory.Exists(fullPath) ? fullPath : File.Exists(fullPath) ? Path.GetDirectoryName(fullPath) : null;
         }
 
+        /// <summary>
+        /// Determines if project is of a specific kind, based on specified list of Guids.
+        /// </summary>
+        /// <param name="project">The EnvDTE.Project object</param>
+        /// <param name="kindGuids">List of Guids to check if project is a match</param>
+        /// <returns>True if project's kind matches any of the provided Guids, otherwise false</returns>
         public static bool IsKind(this EnvDTE.Project project, params string[] kindGuids)
         {
             ThreadHelper.ThrowIfNotOnUIThread();

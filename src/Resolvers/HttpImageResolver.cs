@@ -4,13 +4,14 @@ using System.Net.Http;
 using System.Text.RegularExpressions;
 using System.Threading.Tasks;
 using System.Windows.Media.Imaging;
+using ImagePreview.Helpers;
 using Microsoft.VisualStudio.Text;
 
 namespace ImagePreview.Resolvers
 {
     internal class HttpImageResolver : IImageResolver
     {
-        private static readonly Regex _regex = new(@"(?<image>(https?:|ftp:)?//[\w/\-?=%.\\]+\.(png|gif|jpg|jpeg|ico))\b", RegexOptions.IgnoreCase | RegexOptions.Compiled);
+        private static readonly Regex _regex = new(@"(?<image>(https?:|ftp:)?//[\w/\-?=%.\\]+\.(png|gif|jpg|jpeg|ico|svg))\b", RegexOptions.IgnoreCase | RegexOptions.Compiled);
 
         public bool TryGetMatches(string lineText, out MatchCollection matches)
         {
@@ -19,6 +20,7 @@ namespace ImagePreview.Resolvers
             if (lineText.IndexOf(".png", StringComparison.OrdinalIgnoreCase) > -1 ||
                 lineText.IndexOf(".gif", StringComparison.OrdinalIgnoreCase) > -1 ||
                 lineText.IndexOf(".ico", StringComparison.OrdinalIgnoreCase) > -1 ||
+                lineText.IndexOf(".svg", StringComparison.OrdinalIgnoreCase) > -1 ||
                 lineText.IndexOf(".jpg", StringComparison.OrdinalIgnoreCase) > -1 ||
                 lineText.IndexOf(".jpeg", StringComparison.OrdinalIgnoreCase) > -1)
             {
@@ -59,16 +61,25 @@ namespace ImagePreview.Resolvers
                 byte[] imageBytes = await client.GetByteArrayAsync(result.RawImageString);
                 result.SetFileSize(imageBytes.Length);
 
-                using (MemoryStream ms = new(imageBytes, 0, imageBytes.Length))
+                if (result.RawImageString.EndsWith(".svg", StringComparison.OrdinalIgnoreCase))
                 {
-                    BitmapImage bitmap = new();
-                    bitmap.BeginInit();
-                    bitmap.CacheOption = BitmapCacheOption.OnLoad;
-                    bitmap.UriCachePolicy = new RequestCachePolicy(RequestCacheLevel.Default);
-                    bitmap.StreamSource = ms;
-                    bitmap.EndInit();
+                    string filePath = Path.GetTempFileName();
+                    File.WriteAllBytes(filePath, imageBytes);
+                    return SvgHelper.GetBitmapFromSvgFile(filePath);
+                }
+                else
+                {
+                    using (MemoryStream ms = new(imageBytes, 0, imageBytes.Length))
+                    {
+                        BitmapImage bitmap = new();
+                        bitmap.BeginInit();
+                        bitmap.CacheOption = BitmapCacheOption.OnLoad;
+                        bitmap.UriCachePolicy = new RequestCachePolicy(RequestCacheLevel.Default);
+                        bitmap.StreamSource = ms;
+                        bitmap.EndInit();
 
-                    return bitmap;
+                        return bitmap;
+                    }
                 }
             }
         }
