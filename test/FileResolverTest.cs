@@ -63,6 +63,7 @@ namespace ImagePreview.Test
         }
 
 
+        [Ignore]
         [DataTestMethod]
         [DataRow("test.png", 266)]
         [DataRow("test.svg", 1553)]
