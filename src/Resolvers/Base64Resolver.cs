@@ -9,7 +9,7 @@ namespace ImagePreview.Resolvers
 {
     internal class Base64Resolver : IImageResolver
     {
-        private static readonly Regex _regex = new(@"data:image/[^;]+;base64,(?<image>[^\s=]+)=*", RegexOptions.IgnoreCase | RegexOptions.Compiled);
+        private static readonly Regex _regex = new(@"data:image/[^;]+;base64,(?<image>([^\s=]+)=*)", RegexOptions.IgnoreCase | RegexOptions.Compiled);
 
         public bool TryGetMatches(string lineText, out MatchCollection matches)
         {
@@ -24,7 +24,7 @@ namespace ImagePreview.Resolvers
             return false;
         }
 
-        public Task<ImageReference> GetImageAsync(Span span, string value, string filePat)
+        public Task<ImageReference> GetImageAsync(Span span, string value, string filePath)
         {
             return Task.FromResult(new ImageReference(span, value));
         }

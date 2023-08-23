@@ -2,6 +2,7 @@
 using System.Threading.Tasks;
 using ImagePreview.Resolvers;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
+using Microsoft.VisualStudio.Text;
 
 namespace ImagePreview.Test
 {
@@ -60,6 +61,16 @@ namespace ImagePreview.Test
 
             Assert.AreEqual(1, matches.Count);
             Assert.AreEqual(match, matches[0].Groups["image"].Value);
+        }
+
+        [TestMethod]
+        public async Task GetImageAsync()
+        {
+            Span span = new Span(11, 8);
+            ImageReference result = await _resolver.GetImageAsync(span, "//foo.com/file.png", null);
+
+            Assert.AreEqual("http://foo.com/file.png", result.RawImageString);
+            Assert.AreEqual(span, result.Span);
         }
     }
 }

@@ -42,6 +42,7 @@
     <Reference Include="System.Core" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="Base64ResolverTest.cs" />
     <Compile Include="FileResolverTest.cs" />
     <Compile Include="HttpResolverTest.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
