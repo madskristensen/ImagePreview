@@ -48,9 +48,10 @@
     <Compile Include="Helpers\FileSupport.cs" />
     <Compile Include="Helpers\ExtensionMethods.cs" />
     <Compile Include="Helpers\SvgHelper.cs" />
+    <Compile Include="ReferenceFinder.cs" />
     <Compile Include="Options\General.cs" />
     <Compile Include="QuickInfo\ImageQuickInfoSource.cs" />
-    <Compile Include="ImageResult.cs" />
+    <Compile Include="ImageReference.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="ImagePreviewPackage.cs" />
     <Compile Include="QuickInfo\ImageQuickInfoProvider.cs" />

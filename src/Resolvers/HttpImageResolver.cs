@@ -31,34 +31,28 @@ namespace ImagePreview.Resolvers
             return false;
         }
 
-        public Task<ImageReference> GetImageReferenceAsync(Span span, string value, string filePath)
+        public Task<string> GetAbsoluteUriAsync(ImageReference reference)
         {
-            string absoluteUrl = GetFullUrl(value);
-            return Task.FromResult(new ImageReference(span, absoluteUrl));
-        }
-
-        private static string GetFullUrl(string rawFilePath)
-        {
-            if (string.IsNullOrEmpty(rawFilePath))
+            if (string.IsNullOrEmpty(reference?.RawImageString))
             {
-                return null;
+                return Task.FromResult<string>(null);
             }
 
-            rawFilePath = rawFilePath.Trim('\'', '"', '~');
+            string rawFilePath = reference.RawImageString.Trim('\'', '"', '~');
 
             if (rawFilePath.StartsWith("//", StringComparison.Ordinal))
             {
                 rawFilePath = "http:" + rawFilePath;
             }
 
-            return Uri.TryCreate(rawFilePath, UriKind.Absolute, out Uri result) ? result.OriginalString : null;
+            return Uri.TryCreate(rawFilePath, UriKind.Absolute, out Uri result) ? Task.FromResult(result.OriginalString) : Task.FromResult<string>(null);
         }
 
         public async Task<BitmapSource> GetBitmapAsync(ImageReference result)
         {
             using (HttpClient client = new())
             {
-                byte[] imageBytes = await client.GetByteArrayAsync(result.RawImageString);
+                byte[] imageBytes = await client.GetByteArrayAsync(await GetAbsoluteUriAsync(result));
                 result.SetFileSize(imageBytes.Length);
 
                 if (result.RawImageString.EndsWith(".svg", StringComparison.OrdinalIgnoreCase))

@@ -1,12 +1,9 @@
-﻿using System.Collections.Generic;
-using System.Text.RegularExpressions;
-using System.Threading;
+﻿using System.Threading;
 using System.Threading.Tasks;
 using System.Windows;
 using System.Windows.Controls;
 using System.Windows.Media;
 using System.Windows.Media.Imaging;
-using ImagePreview.Resolvers;
 using Microsoft.VisualStudio.Language.Intellisense;
 using Microsoft.VisualStudio.PlatformUI;
 using Microsoft.VisualStudio.Telemetry;
@@ -24,77 +21,41 @@ namespace ImagePreview
             _textBuffer = textBuffer;
         }
 
-        public static readonly List<IImageResolver> Resolvers = new()
-        {
-            new Base64Resolver(),
-            new PackResolver(),
-            new HttpImageResolver(),
-            new FileImageResolver(),
-        };
-
         public async Task<QuickInfoItem> GetQuickInfoItemAsync(IAsyncQuickInfoSession session, CancellationToken cancellationToken)
         {
-            ITrackingPoint point = session.GetTriggerPoint(_textBuffer);
-            int cursorPosition = point.GetPosition(_textBuffer.CurrentSnapshot);
-            ITextSnapshotLine line = _textBuffer.CurrentSnapshot.GetLineFromPosition(cursorPosition);
-            string lineText = line.GetText();
+            ImageReference reference = await ReferenceFinder.FindAsync(_textBuffer, session.GetTriggerPoint(_textBuffer));
 
-            foreach (IImageResolver resolver in Resolvers)
-            {
-                try
-                {
-                    if (!resolver.TryGetMatches(lineText, out MatchCollection matches))
-                    {
-                        continue;
-                    }
-
-                    foreach (Match match in matches)
-                    {
-                        Span span = new(line.Start + match.Index, match.Length);
-
-                        // Perf: Break the loop if image refs are located after the cursor position
-                        if (span.Start > cursorPosition)
-                        {
-                            break;
-                        }
-
-                        if (span.Contains(cursorPosition))
-                        {
-                            return await GenerateQuickInfoAsync(resolver, match, span);
-                        }
-                    }
-                }
-                catch (Exception ex)
-                {
-                    await ex.LogAsync();
-                }
-            }
-
-            return null;
+            return reference != null ? await GenerateQuickInfoAsync(reference) : null;
         }
 
-        private async Task<QuickInfoItem> GenerateQuickInfoAsync(IImageResolver resolver, Match match, Span span)
+        private async Task<QuickInfoItem> GenerateQuickInfoAsync(ImageReference result)
         {
             await ThreadHelper.JoinableTaskFactory.SwitchToMainThreadAsync();
-            ImageReference result = await resolver.GetImageReferenceAsync(span, match.Groups["image"].Value.Trim(), _textBuffer.GetFileName());
             ITrackingSpan trackingSpan = _textBuffer.CurrentSnapshot.CreateTrackingSpan(result.Span.Start, result.Span.Length, SpanTrackingMode.EdgeExclusive);
 
-            if (result?.RawImageString != null)
+            try
             {
-                BitmapSource bitmap = await resolver.GetBitmapAsync(result);
-
-                if (bitmap != null)
+                if (result?.RawImageString != null)
                 {
-                    UIElement element = CreateUiElement(bitmap, result);
+                    BitmapSource bitmap = await result.Resolver.GetBitmapAsync(result);
 
-                    ImageFormat format = match.GetImageFormat();
-                    TelemetryEvent tel = Telemetry.CreateEvent("ShowPreview");
-                    tel.Properties["Format"] = format;
-                    tel.Properties["Success"] = bitmap != null;
-                    Telemetry.TrackEvent(tel);
+                    if (bitmap != null)
+                    {
+                        UIElement element = CreateUiElement(bitmap, result);
 
-                    return new QuickInfoItem(trackingSpan, element);
+                        ImageFormat format = result.Format;
+                        TelemetryEvent tel = Telemetry.CreateEvent("ShowPreview");
+                        tel.Properties["Format"] = format;
+                        tel.Properties["Success"] = bitmap != null;
+                        Telemetry.TrackEvent(tel);
+
+                        return new QuickInfoItem(trackingSpan, element);
+                    }
                 }
+            }
+            catch (Exception ex)
+            {
+                await ex.LogAsync();
             }
 
             return new QuickInfoItem(trackingSpan, "Could not resolve image for preview");

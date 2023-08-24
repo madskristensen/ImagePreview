@@ -1,4 +1,5 @@
 ﻿using System.IO;
+using System.Net.Cache;
 using System.Text.RegularExpressions;
 using System.Threading.Tasks;
 using System.Windows.Media.Imaging;
@@ -30,20 +31,14 @@ namespace ImagePreview.Resolvers
             return false;
         }
 
-        public async Task<ImageReference> GetImageReferenceAsync(Span span, string value, string filePath)
+        public async Task<string> GetAbsoluteUriAsync(ImageReference reference)
         {
-            string absoluteUrl = await GetFullUrlAsync(value, filePath);
-            return new ImageReference(span, absoluteUrl);
-        }
-
-        public static async Task<string> GetFullUrlAsync(string rawFilePath, string absoluteSourceFile)
-        {
-            if (string.IsNullOrEmpty(rawFilePath))
+            if (string.IsNullOrEmpty(reference?.RawImageString))
             {
                 return null;
             }
 
-            rawFilePath = rawFilePath.Trim('\'', '"', '~');
+            string rawFilePath = reference.RawImageString.Trim('\'', '"', '~');
             rawFilePath = Uri.UnescapeDataString(rawFilePath);
             string absolute;
 
@@ -51,7 +46,7 @@ namespace ImagePreview.Resolvers
             {
                 await ThreadHelper.JoinableTaskFactory.SwitchToMainThreadAsync();
                 DTE dte = await VS.GetRequiredServiceAsync<DTE, DTE>();
-                ProjectItem item = dte.Solution.FindProjectItem(absoluteSourceFile);
+                ProjectItem item = dte.Solution.FindProjectItem(reference.SourceFilePath);
 
                 string projectRoot = item.ContainingProject?.GetRootFolder();
                 absolute = Path.GetFullPath(Path.Combine(projectRoot, rawFilePath.TrimStart('/')));
@@ -64,43 +59,39 @@ namespace ImagePreview.Resolvers
             }
             else
             {
-                absolute = Path.GetFullPath(Path.Combine(Path.GetDirectoryName(absoluteSourceFile), rawFilePath));
+                absolute = Path.GetFullPath(Path.Combine(Path.GetDirectoryName(reference.SourceFilePath), rawFilePath));
             }
 
             return absolute;
         }
 
-        public Task<BitmapSource> GetBitmapAsync(ImageReference result)
+        public async Task<BitmapSource> GetBitmapAsync(ImageReference result)
         {
-            if (string.IsNullOrEmpty(result.RawImageString) || !File.Exists(result.RawImageString))
+            string absoluteFilePath = await result.Resolver.GetAbsoluteUriAsync(result);
+
+            if (string.IsNullOrEmpty(absoluteFilePath) || !File.Exists(absoluteFilePath))
             {
-                return Task.FromResult<BitmapSource>(null);
+                return null;
             }
 
-            TaskCompletionSource<BitmapSource> tcs = new();
-
-            result.SetFileSize(new FileInfo(result.RawImageString).Length);
+            result.SetFileSize(new FileInfo(absoluteFilePath).Length);
 
             if (result.RawImageString.EndsWith(".svg", StringComparison.OrdinalIgnoreCase))
             {
-                tcs.SetResult(SvgHelper.GetBitmapFromSvgFile(result.RawImageString));
+                return SvgHelper.GetBitmapFromSvgFile(absoluteFilePath);
             }
             else
             {
-                BitmapImage bitmap = new(new Uri(result.RawImageString));
+                BitmapImage bitmap = new();
+                bitmap.BeginInit();
+                bitmap.CacheOption = BitmapCacheOption.OnLoad;
+                bitmap.UriCachePolicy = new RequestCachePolicy(RequestCacheLevel.Default);
+                bitmap.UriSource = new Uri(absoluteFilePath);
+                bitmap.EndInit();
+                bitmap.Freeze();
 
-                if (bitmap.IsDownloading)
-                {
-                    bitmap.DownloadCompleted += (s, e) => tcs.SetResult(bitmap);
-                    bitmap.DownloadFailed += (s, e) => tcs.SetException(e.ErrorException);
-                }
-                else
-                {
-                    tcs.SetResult(bitmap);
-                }
+                return bitmap;
             }
-
-            return tcs.Task;
         }
     }
 }

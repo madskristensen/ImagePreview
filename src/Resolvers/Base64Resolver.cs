@@ -24,11 +24,9 @@ namespace ImagePreview.Resolvers
             return false;
         }
 
-        public Task<ImageReference> GetImageReferenceAsync(Span span, string value, string filePath)
+        public Task<string> GetAbsoluteUriAsync(ImageReference reference)
         {
-            ImageReference reference = new(span, value);
-            reference.SetFileSize(span.Length);
-            return Task.FromResult(reference);
+            return Task.FromResult(reference?.RawImageString);
         }
 
         public Task<BitmapSource> GetBitmapAsync(ImageReference result)
@@ -39,7 +37,7 @@ namespace ImagePreview.Resolvers
             }
 
             byte[] imageBytes = Convert.FromBase64String(result.RawImageString);
-
+            result.SetFileSize(result.Span.Length);
             using (MemoryStream ms = new(imageBytes, 0, imageBytes.Length))
             {
                 BitmapImage bitmap = new();

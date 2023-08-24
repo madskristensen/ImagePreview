@@ -18,14 +18,7 @@ namespace ImagePreview.Resolvers
         /// <returns>Returns true if matches are found, else false.</returns>
         bool TryGetMatches(string lineText, out MatchCollection matches);
 
-        /// <summary>
-        /// Asynchronously retrieves the image file and its metadata from a given file path.
-        /// </summary>
-        /// <param name="span">The character span that contains the image path reference.</param>
-        /// <param name="value">The file path reference extracted from the matched string.</param>
-        /// <param name="filePat">The file path of the source.</param>
-        /// <returns>Returns the metadata information of the image file picked up.</returns>
-        Task<ImageReference> GetImageReferenceAsync(Span span, string value, string filePat);
+        Task<string> GetAbsoluteUriAsync(ImageReference reference);
 
         /// <summary>
         /// Asynchronously decodes the image metadata into a <see cref="BitmapSource"/> object.

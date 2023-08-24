@@ -1,8 +1,11 @@
 ﻿using System.IO;
+using System.Net.Cache;
+using System.Text;
 using System.Text.RegularExpressions;
 using System.Threading.Tasks;
 using System.Windows.Media.Imaging;
 using EnvDTE;
+using Microsoft.VisualStudio.PlatformUI;
 using Microsoft.VisualStudio.Text;
 
 namespace ImagePreview.Resolvers
@@ -24,50 +27,41 @@ namespace ImagePreview.Resolvers
             return false;
         }
 
-        public async Task<ImageReference> GetImageReferenceAsync(Span span, string value, string filePath)
+        public async Task<string> GetAbsoluteUriAsync(ImageReference reference)
         {
-            string absoluteUrl = await GetFullUrlAsync(value, filePath);
-            return new ImageReference(span, absoluteUrl);
-        }
-
-        public static async Task<string> GetFullUrlAsync(string rawFilePath, string absoluteSourceFile)
-        {
-            if (string.IsNullOrEmpty(rawFilePath))
+            if (string.IsNullOrEmpty(reference?.RawImageString))
             {
                 return null;
             }
 
             await ThreadHelper.JoinableTaskFactory.SwitchToMainThreadAsync();
             DTE dte = await VS.GetRequiredServiceAsync<DTE, DTE>();
-            ProjectItem item = dte.Solution.FindProjectItem(absoluteSourceFile);
+            ProjectItem item = dte.Solution.FindProjectItem(reference.SourceFilePath);
 
             string projectRoot = item.ContainingProject?.GetRootFolder();
-            return Path.GetFullPath(Path.Combine(projectRoot, rawFilePath.TrimStart('/')));
+            return Path.GetFullPath(Path.Combine(projectRoot, reference.RawImageString.TrimStart('/')));
         }
 
-        public Task<BitmapSource> GetBitmapAsync(ImageReference result)
+        public async Task<BitmapSource> GetBitmapAsync(ImageReference result)
         {
-            if (string.IsNullOrEmpty(result.RawImageString) || !File.Exists(result.RawImageString))
+            string absoluteFilePath = await result.Resolver.GetAbsoluteUriAsync(result);
+            
+            if (string.IsNullOrEmpty(absoluteFilePath) || !File.Exists(absoluteFilePath))
             {
-                return Task.FromResult<BitmapSource>(null);
+                return null;
             }
 
-            result.SetFileSize(new FileInfo(result.RawImageString).Length);
+            result.SetFileSize(new FileInfo(absoluteFilePath).Length);
 
-            TaskCompletionSource<BitmapSource> tcs = new();
-            BitmapImage bitmap = new(new Uri(result.RawImageString));
+            BitmapImage bitmap = new();
+            bitmap.BeginInit();
+            bitmap.CacheOption = BitmapCacheOption.OnLoad;
+            bitmap.UriCachePolicy = new RequestCachePolicy(RequestCacheLevel.Default);
+            bitmap.UriSource = new Uri(absoluteFilePath);
+            bitmap.EndInit();
+            bitmap.Freeze();
 
-            if (bitmap.IsDownloading)
-            {
-                bitmap.DownloadCompleted += (s, e) => tcs.SetResult(bitmap);
-                bitmap.DownloadFailed += (s, e) => tcs.SetException(e.ErrorException);
-            }
-            else
-            {
-                tcs.SetResult(bitmap);
-            }
-
-            return tcs.Task;
+            return bitmap;
         }
     }
 }

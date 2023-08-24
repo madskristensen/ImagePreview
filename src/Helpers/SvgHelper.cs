@@ -48,10 +48,10 @@ namespace ImagePreview.Helpers
 
             double percent = Math.Min(heightPercent, widthPercent);
 
-            int destWidth = (int)(sourceWidth * percent);
-            int destHeight = (int)(sourceHeight * percent);
+            int destinationWidth = (int)(sourceWidth * percent);
+            int destinationHeight = (int)(sourceHeight * percent);
 
-            return new Size(destWidth, destHeight);
+            return new Size(destinationWidth, destinationHeight);
         }
     }
 }

@@ -69,13 +69,14 @@ namespace ImagePreview.Test
         }
 
         [TestMethod]
-        public async Task GetImageReferenceAsync()
+        public void GetImageReference()
         {
             Span span = new Span(11, 8);
             string codeFile = Path.Combine(_folder.FullName, "test.cs");
-            ImageReference result = await _resolver.GetImageReferenceAsync(span, "test.png", codeFile);
-
             string pngPath = Path.ChangeExtension(codeFile, ".png");
+            _resolver.TryGetMatches(pngPath, out System.Text.RegularExpressions.MatchCollection matches);
+            ImageReference result = new ImageReference ( _resolver, span, matches[0], codeFile);
+
             Assert.AreEqual(pngPath, result.RawImageString);
             Assert.AreEqual(span, result.Span);
         }
@@ -88,7 +89,8 @@ namespace ImagePreview.Test
         public async Task GetBitmapAsync(string file, long fileSize)
         {
             string png = Path.Combine(_folder.FullName, file);
-            ImageReference result = new ImageReference(new Span(), png);
+            _resolver.TryGetMatches(png, out System.Text.RegularExpressions.MatchCollection matches);
+            ImageReference result = new ImageReference(_resolver, new Span(), matches[0], null);
             System.Windows.Media.Imaging.BitmapSource bitmap = await _resolver.GetBitmapAsync(result);
 
             Assert.IsNotNull(bitmap);

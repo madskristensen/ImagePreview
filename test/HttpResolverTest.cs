@@ -83,9 +83,10 @@ namespace ImagePreview.Test
         public async Task GetImageReferenceAsync()
         {
             Span span = new Span(11, 8);
-            ImageReference result = await _resolver.GetImageReferenceAsync(span, "//foo.com/file.png", null);
+            _resolver.TryGetMatches("//foo.com/file.png", out System.Text.RegularExpressions.MatchCollection matches);
+            ImageReference result = new ImageReference(_resolver, span, matches[0], null);
 
-            Assert.AreEqual("http://foo.com/file.png", result.RawImageString);
+            Assert.AreEqual("http://foo.com/file.png", await result.Resolver.GetAbsoluteUriAsync(result));
             Assert.AreEqual(span, result.Span);
         }
     }
