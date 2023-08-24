@@ -22,7 +22,7 @@ Supported image references:
 
 ![Image Preview](art/animation.gif)
 
-### How can I help?
+## How can I help?
 If you enjoy using the extension, please give it a ★★★★★ rating on the [Visual Studio Marketplace][marketplace].
 
 Should you encounter bugs or if you have feature requests, head on over to the [GitHub repo][repo] to open an issue if one doesn't already exist.
