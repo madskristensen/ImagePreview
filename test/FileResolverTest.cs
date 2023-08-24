@@ -20,6 +20,7 @@ namespace ImagePreview.Test
 
         [DataTestMethod]
         [DataRow("foo.png", "foo.png")]
+        [DataRow("before foo.png after", "foo.png")]
         [DataRow("~/foo.png", "/foo.png")]
         [DataRow("(foo.png)", "foo.png")]
         [DataRow(">foo.png<", "foo.png")]
@@ -37,6 +38,7 @@ namespace ImagePreview.Test
 
         [DataTestMethod]
         [DataRow(@"c:\test.png", @"c:\test.png")]
+        [DataRow(@"before c:\test.png after", @"c:\test.png")]
         [DataRow(@"c:/test.png", @"c:/test.png")]
         [DataRow(@"d:\test.png<", @"d:\test.png")]
         [DataRow(@"D:\test.png)", @"D:\test.png")]

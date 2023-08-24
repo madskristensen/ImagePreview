@@ -18,6 +18,7 @@ namespace ImagePreview.Test
 
         [DataTestMethod]
         [DataRow("http://foo.com/image.png", "http://foo.com/image.png")]
+        [DataRow("before http://foo.com/image.png after", "http://foo.com/image.png")]
         [DataRow("(http://foo.com/image.png)", "http://foo.com/image.png")]
         [DataRow(">http://foo.com/image.png)<", "http://foo.com/image.png")]
         [DataRow("[http://foo.com/image.png]", "http://foo.com/image.png")]
@@ -33,6 +34,7 @@ namespace ImagePreview.Test
 
         [DataTestMethod]
         [DataRow("https://foo.com/image.png", "https://foo.com/image.png")]
+        [DataRow("before https://foo.com/image.png after", "https://foo.com/image.png")]
         [DataRow("(https://foo.com/image.png)", "https://foo.com/image.png")]
         [DataRow(">https://foo.com/image.png)<", "https://foo.com/image.png")]
         [DataRow("[https://foo.com/image.png]", "https://foo.com/image.png")]
@@ -48,6 +50,7 @@ namespace ImagePreview.Test
 
         [DataTestMethod]
         [DataRow("//foo.com/image.svg", "//foo.com/image.svg")]
+        [DataRow("before //foo.com/image.svg after", "//foo.com/image.svg")]
         [DataRow("//foo.com/image.png", "//foo.com/image.png")]
         [DataRow("(//foo.com/image.png)", "//foo.com/image.png")]
         [DataRow(">//foo.com/image.png)<", "//foo.com/image.png")]
