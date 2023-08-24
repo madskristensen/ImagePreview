@@ -37,9 +37,6 @@ namespace ImagePreview
         /// Sets the size of the image file.
         /// </summary>
         /// <param name="fileSize">The size of the image file.</param>
-        public void SetFileSize(long fileSize)
-        {
-            FileSize = fileSize;
-        }
+        public void SetFileSize(long fileSize) => FileSize = fileSize;
     }
 }

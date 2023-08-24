@@ -9,6 +9,7 @@ using System.Windows.Media.Imaging;
 using ImagePreview.Resolvers;
 using Microsoft.VisualStudio.Language.Intellisense;
 using Microsoft.VisualStudio.PlatformUI;
+using Microsoft.VisualStudio.Telemetry;
 using Microsoft.VisualStudio.Text;
 
 namespace ImagePreview
@@ -16,7 +17,7 @@ namespace ImagePreview
     internal class ImageQuickInfoSource : IAsyncQuickInfoSource
     {
         private readonly ITextBuffer _textBuffer;
-        private static readonly RatingPrompt _prompt = new("MadsKristensen.ImagePreview", Vsix.Name, General.Instance, 2);
+        private static readonly RatingPrompt _prompt = new("MadsKristensen.ImagePreview", Vsix.Name, General.Instance);
 
         public ImageQuickInfoSource(ITextBuffer textBuffer)
         {
@@ -85,6 +86,13 @@ namespace ImagePreview
                 if (bitmap != null)
                 {
                     UIElement element = CreateUiElement(bitmap, result);
+
+                    ImageFormat format = match.GetImageFormat();
+                    TelemetryEvent tel = Telemetry.CreateEvent("ShowPreview");
+                    tel.Properties["Format"] = format;
+                    tel.Properties["Success"] = bitmap != null;
+                    Telemetry.TrackEvent(tel);
+
                     return new QuickInfoItem(trackingSpan, element);
                 }
             }

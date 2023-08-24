@@ -65,6 +65,20 @@ namespace ImagePreview.Test
             Assert.AreEqual(match, matches[0].Groups["image"].Value);
         }
 
+        [DataTestMethod]
+        [DataRow(@"http://foo.com/test.png", ImageFormat.PNG)]
+        [DataRow(@"http://foo.com/test.svg", ImageFormat.SVG)]
+        [DataRow(@"http://foo.com/test.ico", ImageFormat.ICO)]
+        [DataRow(@"http://foo.com/test.jpg", ImageFormat.JPG)]
+        [DataRow(@"http://foo.com/test.jpeg", ImageFormat.JPG)]
+        [DataRow(@"http://foo.com/test.gif", ImageFormat.GIF)]
+        public void ImageFormatType(string path, ImageFormat format)
+        {
+            _resolver.TryGetMatches(path, out System.Text.RegularExpressions.MatchCollection matches);
+
+            Assert.AreEqual(format, matches[0].GetImageFormat());
+        }
+
         [TestMethod]
         public async Task GetImageReferenceAsync()
         {

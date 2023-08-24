@@ -31,6 +31,21 @@ namespace ImagePreview.Test
             Assert.AreEqual(match, matches[0].Groups["image"].Value);
         }
 
+        [DataTestMethod]
+        [DataRow(@"data:image/png;base64,R0lGODlhAQABAAAAACH5BAEKAAEALAAAAAABAAEAAAICTAEAOw==", ImageFormat.PNG)]
+        [DataRow(@"data:image/gif;base64,R0lGODlhAQABAAAAACH5BAEKAAEALAAAAAABAAEAAAICTAEAOw==", ImageFormat.GIF)]
+        [DataRow(@"data:image/jpg;base64,R0lGODlhAQABAAAAACH5BAEKAAEALAAAAAABAAEAAAICTAEAOw==", ImageFormat.JPG)]
+        [DataRow(@"data:image/jpeg;base64,R0lGODlhAQABAAAAACH5BAEKAAEALAAAAAABAAEAAAICTAEAOw==", ImageFormat.JPG)]
+        [DataRow(@"data:image/ico;base64,R0lGODlhAQABAAAAACH5BAEKAAEALAAAAAABAAEAAAICTAEAOw==", ImageFormat.ICO)]
+        [DataRow(@"data:image/icon;base64,R0lGODlhAQABAAAAACH5BAEKAAEALAAAAAABAAEAAAICTAEAOw==", ImageFormat.ICO)]
+        [DataRow(@"data:image/svg;base64,R0lGODlhAQABAAAAACH5BAEKAAEALAAAAAABAAEAAAICTAEAOw==", ImageFormat.SVG)]
+        public void ImageFormatType(string path, ImageFormat format)
+        {
+            _resolver.TryGetMatches(path, out System.Text.RegularExpressions.MatchCollection matches);
+
+            Assert.AreEqual(format, matches[0].GetImageFormat());
+        }
+
         [TestMethod]
         public async Task GetImageReferenceAsync()
         {

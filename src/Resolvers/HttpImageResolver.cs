@@ -11,7 +11,7 @@ namespace ImagePreview.Resolvers
 {
     internal class HttpImageResolver : IImageResolver
     {
-        private static readonly Regex _regex = new(@"(?<image>(https?:|ftp:)?//[\w/\-?=%.\\]+\.(png|gif|jpg|jpeg|ico|svg))\b", RegexOptions.IgnoreCase | RegexOptions.Compiled);
+        private static readonly Regex _regex = new(@"(?<image>(https?:|ftp:)?//[\w/\-?=%.\\]+\.(?<ext>png|gif|jpg|jpeg|ico|svg))\b", RegexOptions.IgnoreCase | RegexOptions.Compiled);
 
         public bool TryGetMatches(string lineText, out MatchCollection matches)
         {
