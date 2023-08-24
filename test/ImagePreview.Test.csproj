@@ -43,6 +43,7 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="Base64ResolverTest.cs" />
+    <Compile Include="PackResolverTest.cs" />
     <Compile Include="FileResolverTest.cs" />
     <Compile Include="HttpResolverTest.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />

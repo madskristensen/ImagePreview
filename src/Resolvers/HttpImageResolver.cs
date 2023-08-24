@@ -5,7 +5,6 @@ using System.Text.RegularExpressions;
 using System.Threading.Tasks;
 using System.Windows.Media.Imaging;
 using ImagePreview.Helpers;
-using Microsoft.VisualStudio.Text;
 
 namespace ImagePreview.Resolvers
 {
@@ -31,7 +30,7 @@ namespace ImagePreview.Resolvers
             return false;
         }
 
-        public Task<string> GetAbsoluteUriAsync(ImageReference reference)
+        public Task<string> GetResolvableUriAsync(ImageReference reference)
         {
             if (string.IsNullOrEmpty(reference?.RawImageString))
             {
@@ -52,7 +51,7 @@ namespace ImagePreview.Resolvers
         {
             using (HttpClient client = new())
             {
-                byte[] imageBytes = await client.GetByteArrayAsync(await GetAbsoluteUriAsync(result));
+                byte[] imageBytes = await client.GetByteArrayAsync(await GetResolvableUriAsync(result));
                 result.SetFileSize(imageBytes.Length);
 
                 if (result.RawImageString.EndsWith(".svg", StringComparison.OrdinalIgnoreCase))

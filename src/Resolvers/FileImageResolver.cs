@@ -5,7 +5,6 @@ using System.Threading.Tasks;
 using System.Windows.Media.Imaging;
 using EnvDTE;
 using ImagePreview.Helpers;
-using Microsoft.VisualStudio.Text;
 
 namespace ImagePreview.Resolvers
 {
@@ -31,7 +30,7 @@ namespace ImagePreview.Resolvers
             return false;
         }
 
-        public async Task<string> GetAbsoluteUriAsync(ImageReference reference)
+        public async Task<string> GetResolvableUriAsync(ImageReference reference)
         {
             if (string.IsNullOrEmpty(reference?.RawImageString))
             {
@@ -67,7 +66,7 @@ namespace ImagePreview.Resolvers
 
         public async Task<BitmapSource> GetBitmapAsync(ImageReference result)
         {
-            string absoluteFilePath = await result.Resolver.GetAbsoluteUriAsync(result);
+            string absoluteFilePath = await GetResolvableUriAsync(result);
 
             if (string.IsNullOrEmpty(absoluteFilePath) || !File.Exists(absoluteFilePath))
             {

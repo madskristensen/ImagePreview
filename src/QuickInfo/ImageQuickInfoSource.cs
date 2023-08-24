@@ -23,7 +23,7 @@ namespace ImagePreview
 
         public async Task<QuickInfoItem> GetQuickInfoItemAsync(IAsyncQuickInfoSession session, CancellationToken cancellationToken)
         {
-            ImageReference reference = await ReferenceFinder.FindAsync(_textBuffer, session.GetTriggerPoint(_textBuffer));
+            ImageReference reference = await session.GetTriggerPoint(_textBuffer).FindImageReferencesAsync();
 
             return reference != null ? await GenerateQuickInfoAsync(reference) : null;
         }

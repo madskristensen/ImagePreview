@@ -1,12 +1,9 @@
 ﻿using System.IO;
 using System.Net.Cache;
-using System.Text;
 using System.Text.RegularExpressions;
 using System.Threading.Tasks;
 using System.Windows.Media.Imaging;
 using EnvDTE;
-using Microsoft.VisualStudio.PlatformUI;
-using Microsoft.VisualStudio.Text;
 
 namespace ImagePreview.Resolvers
 {
@@ -27,7 +24,7 @@ namespace ImagePreview.Resolvers
             return false;
         }
 
-        public async Task<string> GetAbsoluteUriAsync(ImageReference reference)
+        public async Task<string> GetResolvableUriAsync(ImageReference reference)
         {
             if (string.IsNullOrEmpty(reference?.RawImageString))
             {
@@ -42,16 +39,16 @@ namespace ImagePreview.Resolvers
             return Path.GetFullPath(Path.Combine(projectRoot, reference.RawImageString.TrimStart('/')));
         }
 
-        public async Task<BitmapSource> GetBitmapAsync(ImageReference result)
+        public async Task<BitmapSource> GetBitmapAsync(ImageReference reference)
         {
-            string absoluteFilePath = await result.Resolver.GetAbsoluteUriAsync(result);
-            
+            string absoluteFilePath = await GetResolvableUriAsync(reference);
+
             if (string.IsNullOrEmpty(absoluteFilePath) || !File.Exists(absoluteFilePath))
             {
                 return null;
             }
 
-            result.SetFileSize(new FileInfo(absoluteFilePath).Length);
+            reference.SetFileSize(new FileInfo(absoluteFilePath).Length);
 
             BitmapImage bitmap = new();
             bitmap.BeginInit();

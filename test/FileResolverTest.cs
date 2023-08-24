@@ -1,4 +1,5 @@
 ﻿using System.IO;
+using System.Text.RegularExpressions;
 using System.Threading.Tasks;
 using ImagePreview.Resolvers;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
@@ -30,7 +31,7 @@ namespace ImagePreview.Test
         [DataRow("../bar/foo.png", "../bar/foo.png")]
         public void Relative(string path, string match)
         {
-            _resolver.TryGetMatches(path, out System.Text.RegularExpressions.MatchCollection matches);
+            _resolver.TryGetMatches(path, out MatchCollection matches);
 
             Assert.AreEqual(1, matches.Count);
             Assert.AreEqual(match, matches[0].Groups["image"].Value);
@@ -46,7 +47,7 @@ namespace ImagePreview.Test
         [DataRow(@"c:\folder/test.png]", @"c:\folder/test.png")]
         public void Absolute(string path, string match)
         {
-            _resolver.TryGetMatches(path, out System.Text.RegularExpressions.MatchCollection matches);
+            _resolver.TryGetMatches(path, out MatchCollection matches);
 
             Assert.AreEqual(1, matches.Count);
             Assert.AreEqual(match, matches[0].Groups["image"].Value);
@@ -63,7 +64,7 @@ namespace ImagePreview.Test
         [DataRow(@"test.gif", ImageFormat.GIF)]
         public void ImageFormatType(string path, ImageFormat format)
         {
-            _resolver.TryGetMatches(path, out System.Text.RegularExpressions.MatchCollection matches);
+            _resolver.TryGetMatches(path, out MatchCollection matches);
 
             Assert.AreEqual(format, matches[0].GetImageFormat());
         }
@@ -74,7 +75,7 @@ namespace ImagePreview.Test
             Span span = new Span(11, 8);
             string codeFile = Path.Combine(_folder.FullName, "test.cs");
             string pngPath = Path.ChangeExtension(codeFile, ".png");
-            _resolver.TryGetMatches(pngPath, out System.Text.RegularExpressions.MatchCollection matches);
+            _resolver.TryGetMatches(pngPath, out MatchCollection matches);
             ImageReference result = new ImageReference ( _resolver, span, matches[0], codeFile);
 
             Assert.AreEqual(pngPath, result.RawImageString);
@@ -89,7 +90,7 @@ namespace ImagePreview.Test
         public async Task GetBitmapAsync(string file, long fileSize)
         {
             string png = Path.Combine(_folder.FullName, file);
-            _resolver.TryGetMatches(png, out System.Text.RegularExpressions.MatchCollection matches);
+            _resolver.TryGetMatches(png, out MatchCollection matches);
             ImageReference result = new ImageReference(_resolver, new Span(), matches[0], null);
             System.Windows.Media.Imaging.BitmapSource bitmap = await _resolver.GetBitmapAsync(result);
 

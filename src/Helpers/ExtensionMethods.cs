@@ -1,10 +1,82 @@
-﻿using System.IO;
+﻿using System.Collections.Generic;
+using System.IO;
+using ImagePreview.Resolvers;
+using Microsoft.VisualStudio.Text;
+using System.Text.RegularExpressions;
+using System.Threading.Tasks;
 
 namespace ImagePreview
 {
     internal static class ExtensionMethods
     {
         private static readonly string[] _sizeSuffixes = new[] { "bytes", "KB", "MB", "GB", "TB", "PB", "EB", "ZB", "YB" };
+
+        private static readonly List<IImageResolver> _resolvers = new()
+        {
+            new Base64Resolver(),
+            new PackResolver(),
+            new HttpImageResolver(),
+            new FileImageResolver(),
+        };
+
+        /// <summary>
+        /// Finds image references in the given text under the specified trigger point.
+        /// </summary>
+        /// <param name="triggerPoint">The point in the text where image references should be searched for.</param>
+        /// <returns>The first found image reference.</returns>
+        public static async Task<ImageReference> FindImageReferencesAsync(this ITrackingPoint triggerPoint)
+        {
+            int cursorPosition = triggerPoint.GetPosition(triggerPoint.TextBuffer.CurrentSnapshot);
+            ITextSnapshotLine line = triggerPoint.TextBuffer.CurrentSnapshot.GetLineFromPosition(cursorPosition);
+            string lineText = line.GetText();
+
+            foreach (IImageResolver resolver in _resolvers)
+            {
+                try
+                {
+                    if (!resolver.TryGetMatches(lineText, out MatchCollection matches))
+                    {
+                        continue;
+                    }
+
+                    foreach (Match match in matches)
+                    {
+                        Span span = new(line.Start + match.Index, match.Length);
+
+                        // Perf: Break the loop if image refs are located after the cursor position
+                        if (span.Start > cursorPosition)
+                        {
+                            break;
+                        }
+
+                        if (span.Contains(cursorPosition))
+                        {
+                            await ThreadHelper.JoinableTaskFactory.SwitchToMainThreadAsync();
+                            return new ImageReference(resolver, span, match, triggerPoint.TextBuffer.GetFileName());
+                        }
+                    }
+                }
+                catch (Exception ex)
+                {
+                    ex.Log();
+                }
+            }
+
+            return null;
+        }
+
+        public static ImageFormat GetImageFormat(this Match match)
+        {
+            return match.Groups["ext"]?.Value?.TrimStart('.').ToLowerInvariant() switch
+            {
+                "gif" => ImageFormat.GIF,
+                "png" => ImageFormat.PNG,
+                "jpg" or "jpeg" => ImageFormat.JPG,
+                "ico" or "icon" => ImageFormat.ICO,
+                "svg" => ImageFormat.SVG,
+                _ => ImageFormat.Unknown
+            };
+        }
 
         // From https://stackoverflow.com/a/14488941
         public static string ToFileSize(this long value, int decimalPlaces = 1)

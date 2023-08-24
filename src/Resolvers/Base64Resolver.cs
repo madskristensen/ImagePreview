@@ -3,7 +3,6 @@ using System.Net.Cache;
 using System.Text.RegularExpressions;
 using System.Threading.Tasks;
 using System.Windows.Media.Imaging;
-using Microsoft.VisualStudio.Text;
 
 namespace ImagePreview.Resolvers
 {
@@ -24,7 +23,7 @@ namespace ImagePreview.Resolvers
             return false;
         }
 
-        public Task<string> GetAbsoluteUriAsync(ImageReference reference)
+        public Task<string> GetResolvableUriAsync(ImageReference reference)
         {
             return Task.FromResult(reference?.RawImageString);
         }

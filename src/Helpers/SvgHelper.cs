@@ -7,6 +7,11 @@ namespace ImagePreview.Helpers
 {
     internal class SvgHelper
     {
+        /// <summary>
+        /// Converts an Svg file to a BitmapImage.
+        /// </summary>
+        /// <param name="filePath">The path of the Svg file to convert.</param>
+        /// <returns>The BitmapImage representing the Svg file.</returns>
         public static BitmapImage GetBitmapFromSvgFile(string filePath)
         {
             SvgDocument svg = SvgDocument.Open(filePath);
@@ -38,6 +43,11 @@ namespace ImagePreview.Helpers
             return bitmap;
         }
 
+        /// <summary>
+        /// Calculates the dimensions of the destination image when converting from an Svg file.
+        /// </summary>
+        /// <param name="currentSize">The dimensions of the original Svg file.</param>
+        /// <returns>The dimensions of the destination image.</returns>
         private static Size CalculateDimensions(Size currentSize)
         {
             double sourceWidth = currentSize.Width;

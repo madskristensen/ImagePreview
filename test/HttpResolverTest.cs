@@ -86,7 +86,7 @@ namespace ImagePreview.Test
             _resolver.TryGetMatches("//foo.com/file.png", out System.Text.RegularExpressions.MatchCollection matches);
             ImageReference result = new ImageReference(_resolver, span, matches[0], null);
 
-            Assert.AreEqual("http://foo.com/file.png", await result.Resolver.GetAbsoluteUriAsync(result));
+            Assert.AreEqual("http://foo.com/file.png", await _resolver.GetResolvableUriAsync(result));
             Assert.AreEqual(span, result.Span);
         }
     }

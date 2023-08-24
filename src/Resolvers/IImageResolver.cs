@@ -1,7 +1,6 @@
 ﻿using System.Text.RegularExpressions;
 using System.Threading.Tasks;
 using System.Windows.Media.Imaging;
-using Microsoft.VisualStudio.Text;
 
 namespace ImagePreview.Resolvers
 {
@@ -18,7 +17,7 @@ namespace ImagePreview.Resolvers
         /// <returns>Returns true if matches are found, else false.</returns>
         bool TryGetMatches(string lineText, out MatchCollection matches);
 
-        Task<string> GetAbsoluteUriAsync(ImageReference reference);
+        Task<string> GetResolvableUriAsync(ImageReference reference);
 
         /// <summary>
         /// Asynchronously decodes the image metadata into a <see cref="BitmapSource"/> object.

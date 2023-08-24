@@ -45,10 +45,9 @@
     <WarningLevel>4</WarningLevel>
   </PropertyGroup>
   <ItemGroup>
-    <Compile Include="Helpers\FileSupport.cs" />
+    <Compile Include="ImageFormat.cs" />
     <Compile Include="Helpers\ExtensionMethods.cs" />
     <Compile Include="Helpers\SvgHelper.cs" />
-    <Compile Include="ReferenceFinder.cs" />
     <Compile Include="Options\General.cs" />
     <Compile Include="QuickInfo\ImageQuickInfoSource.cs" />
     <Compile Include="ImageReference.cs" />
