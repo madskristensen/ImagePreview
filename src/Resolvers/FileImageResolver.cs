@@ -64,7 +64,7 @@ namespace ImagePreview.Resolvers
             return absolute;
         }
 
-        public async Task<BitmapSource> GetBitmapAsync(ImageReference result)
+        public async Task<BitmapImage> GetBitmapAsync(ImageReference result)
         {
             string absoluteFilePath = await GetResolvableUriAsync(result);
 

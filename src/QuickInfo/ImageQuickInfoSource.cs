@@ -37,12 +37,11 @@ namespace ImagePreview
             {
                 if (result?.RawImageString != null)
                 {
-                    BitmapSource bitmap = await result.Resolver.GetBitmapAsync(result);
+                    BitmapImage bitmap = await result.Resolver.GetBitmapAsync(result);
+                    string url = await result.Resolver.GetResolvableUriAsync(result);
 
-                    if (bitmap != null)
+                    if (CreateUiElement(bitmap, result, url) is UIElement element)
                     {
-                        UIElement element = CreateUiElement(bitmap, result);
-
                         ImageFormat format = result.Format;
                         TelemetryEvent tel = Telemetry.CreateEvent("ShowPreview");
                         tel.Properties["Format"] = format;
@@ -61,27 +60,57 @@ namespace ImagePreview
             return new QuickInfoItem(trackingSpan, "Could not resolve image for preview");
         }
 
-        private static UIElement CreateUiElement(BitmapSource bitmap, ImageReference result)
+        private static UIElement CreateUiElement(BitmapImage bitmap, ImageReference result, string url)
         {
-            Image image = new()
+            if (bitmap == null)
             {
-                Source = bitmap,
-                MaxWidth = Math.Min(Application.Current.MainWindow.Width / 2, 500),
-                MaxHeight = Math.Min(Application.Current.MainWindow.Height / 2, 500),
-                Stretch = Stretch.Uniform,
-                StretchDirection = StretchDirection.DownOnly
-            };
+                return null;
+            }
 
-            Label label = new() { Content = $"{Math.Round(bitmap.Width)}x{Math.Round(bitmap.Height)} ({result.FileSize.ToFileSize(2)})" };
-            label.SetResourceReference(TextBlock.ForegroundProperty, EnvironmentColors.ComboBoxFocusedTextBrushKey);
+            try
+            {
+                FrameworkElement element;
 
-            StackPanel panel = new() { Orientation = Orientation.Vertical };
-            panel.Children.Add(image);
-            panel.Children.Add(label);
+                if (result.Format == ImageFormat.GIF && Uri.TryCreate(url, UriKind.Absolute, out Uri absoluteUri))
+                {
+                    element = new MediaElement()
+                    {
+                        Source = absoluteUri,
+                        LoadedBehavior = MediaState.Play,
+                        MaxWidth = Math.Min(Application.Current.MainWindow.Width / 2, 500),
+                        MaxHeight = Math.Min(Application.Current.MainWindow.Height / 2, 500),
+                        Stretch = Stretch.Uniform,
+                        StretchDirection = StretchDirection.DownOnly
+                    };
+                }
+                else
+                {
+                    element = new Image()
+                    {
+                        Source = bitmap,
+                        MaxWidth = Math.Min(Application.Current.MainWindow.Width / 2, 500),
+                        MaxHeight = Math.Min(Application.Current.MainWindow.Height / 2, 500),
+                        Stretch = Stretch.Uniform,
+                        StretchDirection = StretchDirection.DownOnly
+                    };
+                }
 
-            _prompt.RegisterSuccessfulUsage();
+                Label label = new() { Content = $"{Math.Round(bitmap.Width)}x{Math.Round(bitmap.Height)} ({result.FileSize.ToFileSize(2)})" };
+                label.SetResourceReference(TextBlock.ForegroundProperty, EnvironmentColors.ComboBoxFocusedTextBrushKey);
 
-            return panel;
+                StackPanel panel = new() { Orientation = Orientation.Vertical };
+                panel.Children.Add(element);
+                panel.Children.Add(label);
+
+                _prompt.RegisterSuccessfulUsage();
+
+                return panel;
+            }
+            catch (Exception ex)
+            {
+                ex.Log();
+                return null;
+            }
         }
 
         public void Dispose()

@@ -47,7 +47,7 @@ namespace ImagePreview.Resolvers
             return Uri.TryCreate(rawFilePath, UriKind.Absolute, out Uri result) ? Task.FromResult(result.OriginalString) : Task.FromResult<string>(null);
         }
 
-        public async Task<BitmapSource> GetBitmapAsync(ImageReference result)
+        public async Task<BitmapImage> GetBitmapAsync(ImageReference result)
         {
             using (HttpClient client = new())
             {
