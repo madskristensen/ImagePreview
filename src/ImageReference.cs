@@ -1,14 +1,13 @@
 ﻿using System.Text.RegularExpressions;
 using ImagePreview.Resolvers;
 using Microsoft.VisualStudio.Text;
-using Microsoft.VisualStudio.Text.Editor.Commanding;
 
 namespace ImagePreview
 {
     /// <summary>
     /// Represents an image reference.
     /// </summary>
-    internal class ImageReference
+    public class ImageReference
     {
         /// <summary>
         /// Initializes a new instance of the <see cref="ImageReference"/> class.

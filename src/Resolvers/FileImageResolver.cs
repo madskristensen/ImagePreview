@@ -87,7 +87,6 @@ namespace ImagePreview.Resolvers
                 bitmap.UriCachePolicy = new RequestCachePolicy(RequestCacheLevel.Default);
                 bitmap.UriSource = new Uri(absoluteFilePath);
                 bitmap.EndInit();
-                bitmap.Freeze();
 
                 return bitmap;
             }

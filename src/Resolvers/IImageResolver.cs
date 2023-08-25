@@ -7,7 +7,7 @@ namespace ImagePreview.Resolvers
     /// <summary>
     ///  A base interface for all image resolvers to implement.
     /// </summary>
-    internal interface IImageResolver
+    public interface IImageResolver
     {
         /// <summary>
         /// Tries to get regular expression matches from a given string.

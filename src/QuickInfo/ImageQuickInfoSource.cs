@@ -1,12 +1,8 @@
 ﻿using System.Threading;
 using System.Threading.Tasks;
-using System.Windows;
-using System.Windows.Controls;
-using System.Windows.Media;
 using System.Windows.Media.Imaging;
+using ImagePreview.QuickInfo;
 using Microsoft.VisualStudio.Language.Intellisense;
-using Microsoft.VisualStudio.PlatformUI;
-using Microsoft.VisualStudio.Telemetry;
 using Microsoft.VisualStudio.Text;
 
 namespace ImagePreview
@@ -30,27 +26,30 @@ namespace ImagePreview
 
         private async Task<QuickInfoItem> GenerateQuickInfoAsync(ImageReference result)
         {
+            if (result?.RawImageString == null)
+            {
+                return null;
+            }
+
             await ThreadHelper.JoinableTaskFactory.SwitchToMainThreadAsync();
             ITrackingSpan trackingSpan = _textBuffer.CurrentSnapshot.CreateTrackingSpan(result.Span.Start, result.Span.Length, SpanTrackingMode.EdgeExclusive);
 
             try
             {
-                if (result?.RawImageString != null)
+                PreviewControl control = new();
+
+                ThreadHelper.JoinableTaskFactory.StartOnIdle(async () =>
                 {
                     BitmapImage bitmap = await result.Resolver.GetBitmapAsync(result);
                     string url = await result.Resolver.GetResolvableUriAsync(result);
 
-                    if (CreateUiElement(bitmap, result, url) is UIElement element)
+                    if (control.SetImage(bitmap, result, url))
                     {
-                        ImageFormat format = result.Format;
-                        TelemetryEvent tel = Telemetry.CreateEvent("ShowPreview");
-                        tel.Properties["Format"] = format;
-                        tel.Properties["Success"] = bitmap != null;
-                        Telemetry.TrackEvent(tel);
-
-                        return new QuickInfoItem(trackingSpan, element);
+                        _prompt.RegisterSuccessfulUsage();
                     }
-                }
+                }, VsTaskRunContext.UIThreadIdlePriority).FireAndForget();
+
+                return new QuickInfoItem(trackingSpan, control);
             }
             catch (Exception ex)
             {
@@ -58,59 +57,6 @@ namespace ImagePreview
             }
 
             return new QuickInfoItem(trackingSpan, "Could not resolve image for preview");
-        }
-
-        private static UIElement CreateUiElement(BitmapImage bitmap, ImageReference result, string url)
-        {
-            if (bitmap == null)
-            {
-                return null;
-            }
-
-            try
-            {
-                FrameworkElement element;
-
-                if (result.Format == ImageFormat.GIF && Uri.TryCreate(url, UriKind.Absolute, out Uri absoluteUri))
-                {
-                    element = new MediaElement()
-                    {
-                        Source = absoluteUri,
-                        LoadedBehavior = MediaState.Play,
-                        MaxWidth = Math.Min(Application.Current.MainWindow.Width / 2, 500),
-                        MaxHeight = Math.Min(Application.Current.MainWindow.Height / 2, 500),
-                        Stretch = Stretch.Uniform,
-                        StretchDirection = StretchDirection.DownOnly
-                    };
-                }
-                else
-                {
-                    element = new Image()
-                    {
-                        Source = bitmap,
-                        MaxWidth = Math.Min(Application.Current.MainWindow.Width / 2, 500),
-                        MaxHeight = Math.Min(Application.Current.MainWindow.Height / 2, 500),
-                        Stretch = Stretch.Uniform,
-                        StretchDirection = StretchDirection.DownOnly
-                    };
-                }
-
-                Label label = new() { Content = $"{Math.Round(bitmap.Width)}x{Math.Round(bitmap.Height)} ({result.FileSize.ToFileSize(2)})" };
-                label.SetResourceReference(TextBlock.ForegroundProperty, EnvironmentColors.ComboBoxFocusedTextBrushKey);
-
-                StackPanel panel = new() { Orientation = Orientation.Vertical };
-                panel.Children.Add(element);
-                panel.Children.Add(label);
-
-                _prompt.RegisterSuccessfulUsage();
-
-                return panel;
-            }
-            catch (Exception ex)
-            {
-                ex.Log();
-                return null;
-            }
         }
 
         public void Dispose()
