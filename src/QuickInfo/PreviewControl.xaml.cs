@@ -13,6 +13,7 @@ namespace ImagePreview.QuickInfo
         public PreviewControl()
         {
             InitializeComponent();
+            
             lblSize.SetResourceReference(TextBlock.ForegroundProperty, EnvironmentColors.ComboBoxFocusedTextBrushKey);
         }
 
@@ -36,6 +37,7 @@ namespace ImagePreview.QuickInfo
             }
 
             lblSize.Content = $"{Math.Round(bitmap.Width)}x{Math.Round(bitmap.Height)} ({result.FileSize.ToFileSize(2)})";
+            panel.Visibility = Visibility.Visible;
 
             return true;
         }

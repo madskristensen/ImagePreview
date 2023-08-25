@@ -45,6 +45,7 @@ namespace ImagePreview.Resolvers
                 bitmap.UriCachePolicy = new RequestCachePolicy(RequestCacheLevel.Default);
                 bitmap.StreamSource = ms;
                 bitmap.EndInit();
+                bitmap.Freeze();
 
                 return Task.FromResult(bitmap);
             }

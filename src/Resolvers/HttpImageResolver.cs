@@ -56,9 +56,7 @@ namespace ImagePreview.Resolvers
 
                 if (result.RawImageString.EndsWith(".svg", StringComparison.OrdinalIgnoreCase))
                 {
-                    string filePath = Path.GetTempFileName();
-                    File.WriteAllBytes(filePath, imageBytes);
-                    return SvgHelper.GetBitmapFromSvgFile(filePath);
+                    return SvgHelper.GetBitmapFromSvgFile(imageBytes);
                 }
                 else
                 {
@@ -70,6 +68,7 @@ namespace ImagePreview.Resolvers
                         bitmap.UriCachePolicy = new RequestCachePolicy(RequestCacheLevel.Default);
                         bitmap.StreamSource = ms;
                         bitmap.EndInit();
+                        bitmap.Freeze();
 
                         return bitmap;
                     }

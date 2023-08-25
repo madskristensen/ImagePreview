@@ -21,10 +21,10 @@ namespace ImagePreview
         {
             ImageReference reference = await session.GetTriggerPoint(_textBuffer).FindImageReferencesAsync();
 
-            return reference != null ? await GenerateQuickInfoAsync(reference) : null;
+            return reference != null ? await GetQuickInfoItemAsync(reference) : null;
         }
 
-        private async Task<QuickInfoItem> GenerateQuickInfoAsync(ImageReference result)
+        private async Task<QuickInfoItem> GetQuickInfoItemAsync(ImageReference result)
         {
             if (result?.RawImageString == null)
             {

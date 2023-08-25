@@ -14,33 +14,43 @@ namespace ImagePreview.Helpers
         /// <returns>The BitmapImage representing the Svg file.</returns>
         public static BitmapImage GetBitmapFromSvgFile(string filePath)
         {
-            SvgDocument svg = SvgDocument.Open(filePath);
+            return GetBitmapFromSvgFile(File.ReadAllBytes(filePath));
+        }
 
-            if (svg == null)
+        /// <summary>
+        /// Converts an Svg file to a BitmapImage.
+        /// </summary>
+        /// <param name="buffer">The byte array representing the svg file.</param>
+        /// <returns>The BitmapImage representing the Svg file.</returns>
+        public static BitmapImage GetBitmapFromSvgFile(byte[] buffer)
+        {
+            using (MemoryStream byteStream = new(buffer))
             {
-                return null;
-            }
+                SvgDocument svg = SvgDocument.Open<SvgDocument>(byteStream);
 
-            Size size = CalculateDimensions(new Size(svg.Width.Value, svg.Height.Value));
+                if (svg == null)
+                {
+                    return null;
+                }
 
-            BitmapImage bitmap = new();
+                Size size = CalculateDimensions(new Size(svg.Width.Value, svg.Height.Value));
 
-            using (System.Drawing.Bitmap bmp = svg.Draw((int)size.Width, (int)size.Height))
-            {
+                using (System.Drawing.Bitmap bmp = svg.Draw((int)size.Width, (int)size.Height))
                 using (MemoryStream ms = new())
                 {
                     bmp.Save(ms, System.Drawing.Imaging.ImageFormat.Png);
                     ms.Position = 0;
 
+                    BitmapImage bitmap = new();
                     bitmap.BeginInit();
                     bitmap.CacheOption = BitmapCacheOption.OnLoad;
                     bitmap.StreamSource = ms;
                     bitmap.EndInit();
+                    bitmap.Freeze();
+
+                    return bitmap;
                 }
             }
-
-            bitmap.Freeze();
-            return bitmap;
         }
 
         /// <summary>
