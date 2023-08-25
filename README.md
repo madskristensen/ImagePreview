@@ -12,7 +12,7 @@ Download this extension from the [Visual Studio Marketplace][marketplace] or get
 
 Shows an image preview when the mouse hovers over any URL or file path string anywhere in any text file. 
 
-Supported image references:
+It supports **GIF**, **PNG**, **JPG**, **ICO**, and **SVG** in the following image reference syntaxes:
 
 - **Absolute URL** (http, https, and ftp)
 - **Relative URL** (./, ../, and /)
