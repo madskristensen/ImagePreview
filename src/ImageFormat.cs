@@ -31,6 +31,21 @@
         SVG,
 
         /// <summary>
+        /// Tagged Image File Format
+        /// </summary>
+        TIFF,
+
+        /// <summary>
+        /// Bitmap (BMP).
+        /// </summary>
+        BMP,
+
+        /// <summary>
+        /// Windows Media Photo.
+        /// </summary>
+        WMP,
+
+        /// <summary>
         /// Unknown format.
         /// </summary>
         Unknown

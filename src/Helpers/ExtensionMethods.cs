@@ -74,6 +74,9 @@ namespace ImagePreview
                 "jpg" or "jpeg" => ImageFormat.JPG,
                 "ico" or "icon" => ImageFormat.ICO,
                 "svg" => ImageFormat.SVG,
+                "tif" or "tiff" => ImageFormat.TIFF,
+                "bmp" => ImageFormat.BMP,
+                "wmp" => ImageFormat.WMP,
                 _ => ImageFormat.Unknown
             };
         }

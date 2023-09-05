@@ -21,6 +21,7 @@ namespace ImagePreview.Test
 
         [DataTestMethod]
         [DataRow("foo.png", "foo.png")]
+        [DataRow("foo.tif", "foo.tif")]
         [DataRow("before foo.png after", "foo.png")]
         [DataRow("~/foo.png", "/foo.png")]
         [DataRow("(foo.png)", "foo.png")]
@@ -62,6 +63,9 @@ namespace ImagePreview.Test
         [DataRow(@"test.jpg", ImageFormat.JPG)]
         [DataRow(@"test.jpeg", ImageFormat.JPG)]
         [DataRow(@"test.gif", ImageFormat.GIF)]
+        [DataRow(@"test.tif", ImageFormat.TIFF)]
+        [DataRow(@"test.bmp", ImageFormat.BMP)]
+        [DataRow(@"test.wmp", ImageFormat.WMP)]
         public void ImageFormatType(string path, ImageFormat format)
         {
             _resolver.TryGetMatches(path, out MatchCollection matches);

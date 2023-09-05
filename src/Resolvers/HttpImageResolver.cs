@@ -10,7 +10,7 @@ namespace ImagePreview.Resolvers
 {
     internal class HttpImageResolver : IImageResolver
     {
-        private static readonly Regex _regex = new(@"(?<image>(https?:|ftp:)?//[\w/\-?=%.\\]+\.(?<ext>png|gif|jpg|jpeg|ico|svg))\b", RegexOptions.IgnoreCase | RegexOptions.Compiled);
+        private static readonly Regex _regex = new(@"(?<image>(https?:|ftp:)?//[\w/\-?=%.\\]+\.(?<ext>png|gif|jpg|jpeg|ico|svg|tif|tiff|bmp|wmp))\b", RegexOptions.IgnoreCase | RegexOptions.Compiled);
 
         public bool TryGetMatches(string lineText, out MatchCollection matches)
         {
@@ -20,6 +20,10 @@ namespace ImagePreview.Resolvers
                 lineText.IndexOf(".gif", StringComparison.OrdinalIgnoreCase) > -1 ||
                 lineText.IndexOf(".ico", StringComparison.OrdinalIgnoreCase) > -1 ||
                 lineText.IndexOf(".svg", StringComparison.OrdinalIgnoreCase) > -1 ||
+                lineText.IndexOf(".tif", StringComparison.OrdinalIgnoreCase) > -1 ||
+                lineText.IndexOf(".tiff", StringComparison.OrdinalIgnoreCase) > -1 ||
+                lineText.IndexOf(".bmp", StringComparison.OrdinalIgnoreCase) > -1 ||
+                lineText.IndexOf(".wmp", StringComparison.OrdinalIgnoreCase) > -1 ||
                 lineText.IndexOf(".jpg", StringComparison.OrdinalIgnoreCase) > -1 ||
                 lineText.IndexOf(".jpeg", StringComparison.OrdinalIgnoreCase) > -1)
             {

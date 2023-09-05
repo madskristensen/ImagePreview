@@ -9,7 +9,7 @@ namespace ImagePreview.Resolvers
 {
     internal class PackResolver : IImageResolver
     {
-        private static readonly Regex _regex = new(@"(pack://application:[^/]+)?/[\w]+;component/(?<image>[^""]+\.(?<ext>png|gif|jpg|jpeg|ico))\b", RegexOptions.IgnoreCase | RegexOptions.Compiled);
+        private static readonly Regex _regex = new(@"(pack://application:[^/]+)?/[\w]+;component/(?<image>[^""]+\.(?<ext>png|gif|jpg|jpeg|ico|tif|bmp|wmp))\b", RegexOptions.IgnoreCase | RegexOptions.Compiled);
 
         public bool TryGetMatches(string lineText, out MatchCollection matches)
         {
