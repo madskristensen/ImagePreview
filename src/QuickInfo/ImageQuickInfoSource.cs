@@ -49,18 +49,16 @@ namespace ImagePreview
                 {
                     BitmapImage bitmap = await result.Resolver.GetBitmapAsync(result);
 
-                    if (bitmap != null)
+                    string url = await result.Resolver.GetResolvableUriAsync(result);
+
+                    if (control.SetImage(bitmap, result, url))
                     {
-                        string url = await result.Resolver.GetResolvableUriAsync(result);
-
-                        if (control.SetImage(bitmap, result, url))
-                        {
-                            tel.Properties["success"] = true;
-                            Telemetry.TrackEvent(tel);
-
-                            _prompt.RegisterSuccessfulUsage();
-                        }
+                        _prompt.RegisterSuccessfulUsage();
                     }
+
+                    tel.Properties["success"] = bitmap != null;
+                    Telemetry.TrackEvent(tel);
+
                 }, VsTaskRunContext.UIThreadIdlePriority).FireAndForget();
 
                 return new QuickInfoItem(trackingSpan, control);
