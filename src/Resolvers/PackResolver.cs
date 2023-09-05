@@ -11,6 +11,8 @@ namespace ImagePreview.Resolvers
     {
         private static readonly Regex _regex = new(@"(pack://application:[^/]+)?/[\w]+;component/(?<image>[^""]+\.(?<ext>png|gif|jpg|jpeg|ico|tif|bmp|wmp))\b", RegexOptions.IgnoreCase | RegexOptions.Compiled);
 
+        public string DisplayName => "Pack URI";
+
         public bool TryGetMatches(string lineText, out MatchCollection matches)
         {
             matches = null;

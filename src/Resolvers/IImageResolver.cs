@@ -9,6 +9,8 @@ namespace ImagePreview.Resolvers
     /// </summary>
     public interface IImageResolver
     {
+        string DisplayName { get; }
+
         /// <summary>
         /// Tries to get regular expression matches from a given string.
         /// </summary>

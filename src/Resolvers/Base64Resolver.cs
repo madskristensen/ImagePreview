@@ -10,6 +10,8 @@ namespace ImagePreview.Resolvers
     {
         private static readonly Regex _regex = new(@"data:image/(?<ext>[^;]+);base64,(?<image>([^\s=]+)=*)", RegexOptions.IgnoreCase | RegexOptions.Compiled);
 
+        public string DisplayName => "Base64";
+
         public bool TryGetMatches(string lineText, out MatchCollection matches)
         {
             matches = null;

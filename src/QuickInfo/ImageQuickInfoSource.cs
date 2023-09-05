@@ -3,6 +3,7 @@ using System.Threading.Tasks;
 using System.Windows.Media.Imaging;
 using ImagePreview.QuickInfo;
 using Microsoft.VisualStudio.Language.Intellisense;
+using Microsoft.VisualStudio.Telemetry;
 using Microsoft.VisualStudio.Text;
 
 namespace ImagePreview
@@ -26,8 +27,14 @@ namespace ImagePreview
 
         private async Task<QuickInfoItem> GetQuickInfoItemAsync(ImageReference result)
         {
+            TelemetryEvent tel = Telemetry.CreateEvent("showpreview");
+            tel.Properties["resolver"] = result?.Resolver?.DisplayName;
+            tel.Properties["format"] = result?.Format;
+            tel.Properties.Add("success", false);
+
             if (result?.RawImageString == null)
             {
+                Telemetry.TrackEvent(tel);
                 return null;
             }
 
@@ -41,11 +48,18 @@ namespace ImagePreview
                 ThreadHelper.JoinableTaskFactory.StartOnIdle(async () =>
                 {
                     BitmapImage bitmap = await result.Resolver.GetBitmapAsync(result);
-                    string url = await result.Resolver.GetResolvableUriAsync(result);
 
-                    if (control.SetImage(bitmap, result, url))
+                    if (bitmap != null)
                     {
-                        _prompt.RegisterSuccessfulUsage();
+                        string url = await result.Resolver.GetResolvableUriAsync(result);
+
+                        if (control.SetImage(bitmap, result, url))
+                        {
+                            tel.Properties["success"] = true;
+                            Telemetry.TrackEvent(tel);
+
+                            _prompt.RegisterSuccessfulUsage();
+                        }
                     }
                 }, VsTaskRunContext.UIThreadIdlePriority).FireAndForget();
 
@@ -54,6 +68,7 @@ namespace ImagePreview
             catch (Exception ex)
             {
                 await ex.LogAsync();
+                Telemetry.TrackEvent(tel);
             }
 
             return new QuickInfoItem(trackingSpan, "Could not resolve image for preview");

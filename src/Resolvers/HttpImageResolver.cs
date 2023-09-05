@@ -12,6 +12,8 @@ namespace ImagePreview.Resolvers
     {
         private static readonly Regex _regex = new(@"(?<image>(https?:|ftp:)?//[\w/\-?=%.\\]+\.(?<ext>png|gif|jpg|jpeg|ico|svg|tif|tiff|bmp|wmp))\b", RegexOptions.IgnoreCase | RegexOptions.Compiled);
 
+        public string DisplayName => "HTTP";
+
         public bool TryGetMatches(string lineText, out MatchCollection matches)
         {
             matches = null;
@@ -53,30 +55,38 @@ namespace ImagePreview.Resolvers
 
         public async Task<BitmapImage> GetBitmapAsync(ImageReference result)
         {
-            using (HttpClient client = new())
+            try
             {
-                byte[] imageBytes = await client.GetByteArrayAsync(await GetResolvableUriAsync(result));
-                result.SetFileSize(imageBytes.Length);
+                using (HttpClient client = new())
+                {
+                    byte[] imageBytes = await client.GetByteArrayAsync(await GetResolvableUriAsync(result));
+                    result.SetFileSize(imageBytes.Length);
 
-                if (result.RawImageString.EndsWith(".svg", StringComparison.OrdinalIgnoreCase))
-                {
-                    return SvgHelper.GetBitmapFromSvgFile(imageBytes);
-                }
-                else
-                {
-                    using (MemoryStream ms = new(imageBytes, 0, imageBytes.Length))
+                    if (result.RawImageString.EndsWith(".svg", StringComparison.OrdinalIgnoreCase))
                     {
-                        BitmapImage bitmap = new();
-                        bitmap.BeginInit();
-                        bitmap.CacheOption = BitmapCacheOption.OnLoad;
-                        bitmap.UriCachePolicy = new RequestCachePolicy(RequestCacheLevel.Default);
-                        bitmap.StreamSource = ms;
-                        bitmap.EndInit();
-                        bitmap.Freeze();
+                        return SvgHelper.GetBitmapFromSvgFile(imageBytes);
+                    }
+                    else
+                    {
+                        using (MemoryStream ms = new(imageBytes, 0, imageBytes.Length))
+                        {
+                            BitmapImage bitmap = new();
+                            bitmap.BeginInit();
+                            bitmap.CacheOption = BitmapCacheOption.OnLoad;
+                            bitmap.UriCachePolicy = new RequestCachePolicy(RequestCacheLevel.Default);
+                            bitmap.StreamSource = ms;
+                            bitmap.EndInit();
+                            bitmap.Freeze();
 
-                        return bitmap;
+                            return bitmap;
+                        }
                     }
                 }
+            }
+            catch (Exception ex)
+            {
+                await ex.LogAsync();
+                return null;
             }
         }
     }

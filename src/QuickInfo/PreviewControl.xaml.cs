@@ -8,13 +8,18 @@ namespace ImagePreview.QuickInfo
     /// <summary>
     /// Interaction logic for PreviewControl.xaml
     /// </summary>
-    public partial class PreviewControl : UserControl
+    public partial class PreviewControl : UserControl, IDisposable
     {
         public PreviewControl()
         {
             InitializeComponent();
             
             lblSize.SetResourceReference(TextBlock.ForegroundProperty, EnvironmentColors.ComboBoxFocusedTextBrushKey);
+        }
+
+        public void Dispose()
+        {
+            throw new NotImplementedException();
         }
 
         public bool SetImage(BitmapImage bitmap, ImageReference result, string url)

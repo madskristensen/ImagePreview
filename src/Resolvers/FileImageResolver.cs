@@ -12,6 +12,8 @@ namespace ImagePreview.Resolvers
     {
         private static readonly Regex _regex = new(@"(?:^|[\s""'\<\>\(\)]|)(?<image>([a-z]:[\\./]+)?([\w\.\\\-/]+)(\.(?<ext>png|gif|jpg|jpeg|ico|svg|tif|tiff|bmp|wmp)))\b", RegexOptions.IgnoreCase | RegexOptions.Compiled);
 
+        public string DisplayName => "File";
+
         public bool TryGetMatches(string lineText, out MatchCollection matches)
         {
             matches = null;
