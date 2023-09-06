@@ -25,21 +25,21 @@ namespace ImagePreview
             return reference != null ? await GetQuickInfoItemAsync(reference) : null;
         }
 
-        private async Task<QuickInfoItem> GetQuickInfoItemAsync(ImageReference result)
+        private async Task<QuickInfoItem> GetQuickInfoItemAsync(ImageReference reference)
         {
             TelemetryEvent tel = Telemetry.CreateEvent("showpreview");
-            tel.Properties["resolver"] = result?.Resolver?.DisplayName;
-            tel.Properties["format"] = result?.Format;
+            tel.Properties["resolver"] = reference?.Resolver?.DisplayName;
+            tel.Properties["format"] = reference?.Format;
             tel.Properties.Add("success", false);
 
-            if (result?.RawImageString == null)
+            if (reference?.RawImageString == null)
             {
                 Telemetry.TrackEvent(tel);
                 return null;
             }
 
             await ThreadHelper.JoinableTaskFactory.SwitchToMainThreadAsync();
-            ITrackingSpan trackingSpan = _textBuffer.CurrentSnapshot.CreateTrackingSpan(result.Span.Start, result.Span.Length, SpanTrackingMode.EdgeExclusive);
+            ITrackingSpan trackingSpan = _textBuffer.CurrentSnapshot.CreateTrackingSpan(reference.Span.Start, reference.Span.Length, SpanTrackingMode.EdgeExclusive);
 
             try
             {
@@ -47,11 +47,11 @@ namespace ImagePreview
 
                 ThreadHelper.JoinableTaskFactory.StartOnIdle(async () =>
                 {
-                    BitmapImage bitmap = await result.Resolver.GetBitmapAsync(result);
+                    BitmapImage bitmap = await reference.Resolver.GetBitmapAsync(reference);
 
-                    string url = await result.Resolver.GetResolvableUriAsync(result);
+                    string url = await reference.Resolver.GetResolvableUriAsync(reference);
 
-                    if (control.SetImage(bitmap, result, url))
+                    if (control.SetImage(bitmap, reference, url))
                     {
                         _prompt.RegisterSuccessfulUsage();
                     }

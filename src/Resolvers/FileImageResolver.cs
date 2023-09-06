@@ -45,9 +45,10 @@ namespace ImagePreview.Resolvers
 
             string rawFilePath = reference.RawImageString.Trim('\'', '"', '~');
             rawFilePath = Uri.UnescapeDataString(rawFilePath);
+            bool isAbsolute = reference.RawImageString.Contains(":");
             string absolute;
 
-            if (rawFilePath.StartsWith("/"))
+            if (!isAbsolute)
             {
                 await ThreadHelper.JoinableTaskFactory.SwitchToMainThreadAsync();
                 DTE dte = await VS.GetRequiredServiceAsync<DTE, DTE>();
@@ -56,10 +57,18 @@ namespace ImagePreview.Resolvers
                 string projectRoot = item.ContainingProject?.GetRootFolder();
                 absolute = Path.GetFullPath(Path.Combine(projectRoot, rawFilePath.TrimStart('/')));
 
-                // Check the wwwroot sub folder which is used in ASP.NET Core projects
                 if (!File.Exists(absolute))
                 {
-                    absolute = Path.GetFullPath(Path.Combine(projectRoot, "wwwroot", rawFilePath.TrimStart('/')));
+                    string[] appRoots = new[] { "wwwroot", "app", "dist", "public" };
+
+                    foreach (string appRoot in appRoots)
+                    {
+                        absolute = Path.GetFullPath(Path.Combine(projectRoot, appRoot, rawFilePath.TrimStart('/')));
+                        if (File.Exists(absolute))
+                        {
+                            break;
+                        }
+                    }
                 }
             }
             else
