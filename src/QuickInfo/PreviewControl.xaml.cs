@@ -23,7 +23,7 @@ namespace ImagePreview.QuickInfo
             throw new NotImplementedException();
         }
 
-        public bool SetImage(BitmapImage bitmap, ImageReference result, string url)
+        public bool SetImage(BitmapSource bitmap, ImageReference result, string url)
         {
             if (bitmap == null)
             {

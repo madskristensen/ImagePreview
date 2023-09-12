@@ -26,6 +26,6 @@ namespace ImagePreview.Resolvers
         /// </summary>
         /// <param name="result">The image metadata as represented by an <see cref="ImageReference"/> object.</param>
         /// <returns>Returns a <see cref="BitmapSource"/> object that can be used to display the image.</returns>
-        Task<BitmapImage> GetBitmapAsync(ImageReference result);
+        Task<BitmapSource> GetBitmapAsync(ImageReference result);
     }
 }

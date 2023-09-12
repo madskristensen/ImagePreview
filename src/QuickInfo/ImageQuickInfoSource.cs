@@ -47,7 +47,7 @@ namespace ImagePreview
 
                 ThreadHelper.JoinableTaskFactory.StartOnIdle(async () =>
                 {
-                    BitmapImage bitmap = await reference.Resolver.GetBitmapAsync(reference);
+                    BitmapSource bitmap = await reference.Resolver.GetBitmapAsync(reference);
 
                     string url = await reference.Resolver.GetResolvableUriAsync(reference);
 

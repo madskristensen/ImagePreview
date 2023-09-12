@@ -53,7 +53,7 @@ namespace ImagePreview.Resolvers
             return Uri.TryCreate(rawFilePath, UriKind.Absolute, out Uri result) ? Task.FromResult(result.OriginalString) : Task.FromResult<string>(null);
         }
 
-        public async Task<BitmapImage> GetBitmapAsync(ImageReference result)
+        public async Task<BitmapSource> GetBitmapAsync(ImageReference result)
         {
             try
             {
@@ -62,7 +62,7 @@ namespace ImagePreview.Resolvers
                     byte[] imageBytes = await client.GetByteArrayAsync(await GetResolvableUriAsync(result));
                     result.SetFileSize(imageBytes.Length);
 
-                    if (result.RawImageString.EndsWith(".svg", StringComparison.OrdinalIgnoreCase))
+                    if (result.Format == ImageFormat.SVG)
                     {
                         return SvgHelper.GetBitmapFromSvgFile(imageBytes);
                     }

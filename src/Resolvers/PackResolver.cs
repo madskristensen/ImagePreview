@@ -41,7 +41,7 @@ namespace ImagePreview.Resolvers
             return Path.GetFullPath(Path.Combine(projectRoot, reference.RawImageString.TrimStart('/')));
         }
 
-        public async Task<BitmapImage> GetBitmapAsync(ImageReference reference)
+        public async Task<BitmapSource> GetBitmapAsync(ImageReference reference)
         {
             string absoluteFilePath = await GetResolvableUriAsync(reference);
 

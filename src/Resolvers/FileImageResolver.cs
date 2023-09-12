@@ -79,7 +79,7 @@ namespace ImagePreview.Resolvers
             return absolute;
         }
 
-        public async Task<BitmapImage> GetBitmapAsync(ImageReference result)
+        public async Task<BitmapSource> GetBitmapAsync(ImageReference result)
         {
             string absoluteFilePath = await GetResolvableUriAsync(result);
 
@@ -90,7 +90,7 @@ namespace ImagePreview.Resolvers
 
             result.SetFileSize(new FileInfo(absoluteFilePath).Length);
 
-            if (result.RawImageString.EndsWith(".svg", StringComparison.OrdinalIgnoreCase))
+            if (result.Format == ImageFormat.SVG)
             {
                 return SvgHelper.GetBitmapFromSvgFile(absoluteFilePath);
             }

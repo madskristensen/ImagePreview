@@ -30,11 +30,11 @@ namespace ImagePreview.Resolvers
             return Task.FromResult(reference?.RawImageString);
         }
 
-        public Task<BitmapImage> GetBitmapAsync(ImageReference result)
+        public Task<BitmapSource> GetBitmapAsync(ImageReference result)
         {
             if (string.IsNullOrEmpty(result.RawImageString))
             {
-                return Task.FromResult<BitmapImage>(null);
+                return Task.FromResult<BitmapSource>(null);
             }
 
             byte[] imageBytes = Convert.FromBase64String(result.RawImageString);
@@ -49,7 +49,7 @@ namespace ImagePreview.Resolvers
                 bitmap.EndInit();
                 bitmap.Freeze();
 
-                return Task.FromResult(bitmap);
+                return Task.FromResult<BitmapSource>(bitmap);
             }
         }
     }
