@@ -1,4 +1,5 @@
-﻿using System.Threading;
+﻿using System.IO;
+using System.Threading;
 using System.Threading.Tasks;
 using System.Windows.Media.Imaging;
 using ImagePreview.QuickInfo;
@@ -30,7 +31,8 @@ namespace ImagePreview
             TelemetryEvent tel = Telemetry.CreateEvent("showpreview");
             tel.Properties["resolver"] = reference?.Resolver?.DisplayName;
             tel.Properties["format"] = reference?.Format;
-            tel.Properties.Add("success", false);
+            tel.Properties["filetype"] = Path.GetExtension(reference?.SourceFilePath ?? "").ToLowerInvariant();
+            tel.Properties["success"] = false;
 
             if (reference?.RawImageString == null)
             {
