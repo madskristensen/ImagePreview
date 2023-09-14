@@ -42,12 +42,12 @@ namespace ImagePreview.Test
         }
 
         [DataTestMethod]
-        [DataRow("/MyAssembly;component/foo.png", ImageFormat.PNG)]
-        [DataRow("/MyAssembly;component/foo.Gif", ImageFormat.GIF)]
-        [DataRow("/MyAssembly;component/foo.jpG", ImageFormat.JPG)]
-        [DataRow("/MyAssembly;component/foo.ico", ImageFormat.ICO)]
-        [DataRow("/MyAssembly;component/foo.png", ImageFormat.PNG)]
-        public void ImageFormatType(string path, ImageFormat format)
+        [DataRow("/MyAssembly;component/foo.png", "PNG")]
+        [DataRow("/MyAssembly;component/foo.Gif", "GIF")]
+        [DataRow("/MyAssembly;component/foo.jpG", "JPG")]
+        [DataRow("/MyAssembly;component/foo.ico", "ICO")]
+        [DataRow("/MyAssembly;component/foo.png", "PNG")]
+        public void ImageFormatType(string path, string format)
         {
             _resolver.TryGetMatches(path, out MatchCollection matches);
 

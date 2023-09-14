@@ -5,35 +5,21 @@ using System.Text.RegularExpressions;
 using System.Threading.Tasks;
 using System.Windows.Media.Imaging;
 using ImagePreview.Helpers;
+using WpfApplication1.Classes;
 
 namespace ImagePreview.Resolvers
 {
     internal class HttpImageResolver : IImageResolver
     {
-        private static readonly Regex _regex = new(@"(?<image>(https?:|ftp:)?//[\w/\-?=%.\\]+\.(?<ext>png|gif|jpg|jpeg|ico|svg|tif|tiff|bmp|wmp))\b", RegexOptions.IgnoreCase | RegexOptions.Compiled);
+        private static readonly string _pattern = $@"(?<image>(https?:|ftp:)?//[\w/\-?=%.\\]+\.(?<ext>{BitmapImageCheck.Instance.AllSupportedExtensionsString}))\b";
+        private static readonly Regex _regex = new(_pattern, RegexOptions.IgnoreCase | RegexOptions.Compiled);
 
         public string DisplayName => "HTTP";
 
         public bool TryGetMatches(string lineText, out MatchCollection matches)
         {
-            matches = null;
-
-            if (lineText.IndexOf(".png", StringComparison.OrdinalIgnoreCase) > -1 ||
-                lineText.IndexOf(".gif", StringComparison.OrdinalIgnoreCase) > -1 ||
-                lineText.IndexOf(".ico", StringComparison.OrdinalIgnoreCase) > -1 ||
-                lineText.IndexOf(".svg", StringComparison.OrdinalIgnoreCase) > -1 ||
-                lineText.IndexOf(".tif", StringComparison.OrdinalIgnoreCase) > -1 ||
-                lineText.IndexOf(".tiff", StringComparison.OrdinalIgnoreCase) > -1 ||
-                lineText.IndexOf(".bmp", StringComparison.OrdinalIgnoreCase) > -1 ||
-                lineText.IndexOf(".wmp", StringComparison.OrdinalIgnoreCase) > -1 ||
-                lineText.IndexOf(".jpg", StringComparison.OrdinalIgnoreCase) > -1 ||
-                lineText.IndexOf(".jpeg", StringComparison.OrdinalIgnoreCase) > -1)
-            {
-                matches = _regex.Matches(lineText);
-                return true;
-            }
-
-            return false;
+            matches = _regex.Matches(lineText);
+            return matches.Count > 0;
         }
 
         public Task<string> GetResolvableUriAsync(ImageReference reference)
@@ -62,7 +48,7 @@ namespace ImagePreview.Resolvers
                     byte[] imageBytes = await client.GetByteArrayAsync(await GetResolvableUriAsync(result));
                     result.SetFileSize(imageBytes.Length);
 
-                    if (result.Format == ImageFormat.SVG)
+                    if (result.ImageFileType == "SVG")
                     {
                         return SvgHelper.GetBitmapFromSvgFile(imageBytes);
                     }

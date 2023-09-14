@@ -66,13 +66,13 @@ namespace ImagePreview.Test
         }
 
         [DataTestMethod]
-        [DataRow(@"http://foo.com/test.png", ImageFormat.PNG)]
-        [DataRow(@"http://foo.com/test.svg", ImageFormat.SVG)]
-        [DataRow(@"http://foo.com/test.ico", ImageFormat.ICO)]
-        [DataRow(@"http://foo.com/test.jpg", ImageFormat.JPG)]
-        [DataRow(@"http://foo.com/test.jpeg", ImageFormat.JPG)]
-        [DataRow(@"http://foo.com/test.gif", ImageFormat.GIF)]
-        public void ImageFormatType(string path, ImageFormat format)
+        [DataRow(@"http://foo.com/test.png", "PNG")]
+        [DataRow(@"http://foo.com/test.svg", "SVG")]
+        [DataRow(@"http://foo.com/test.ico", "ICO")]
+        [DataRow(@"http://foo.com/test.jpg", "JPG")]
+        [DataRow(@"http://foo.com/test.jpeg", "JPEG")]
+        [DataRow(@"http://foo.com/test.gif", "GIF")]
+        public void ImageFormatType(string path, string format)
         {
             _resolver.TryGetMatches(path, out System.Text.RegularExpressions.MatchCollection matches);
 

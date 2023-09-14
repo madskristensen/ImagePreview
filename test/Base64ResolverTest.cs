@@ -33,14 +33,13 @@ namespace ImagePreview.Test
         }
 
         [DataTestMethod]
-        [DataRow(@"data:image/png;base64,R0lGODlhAQABAAAAACH5BAEKAAEALAAAAAABAAEAAAICTAEAOw==", ImageFormat.PNG)]
-        [DataRow(@"data:image/gif;base64,R0lGODlhAQABAAAAACH5BAEKAAEALAAAAAABAAEAAAICTAEAOw==", ImageFormat.GIF)]
-        [DataRow(@"data:image/jpg;base64,R0lGODlhAQABAAAAACH5BAEKAAEALAAAAAABAAEAAAICTAEAOw==", ImageFormat.JPG)]
-        [DataRow(@"data:image/jpeg;base64,R0lGODlhAQABAAAAACH5BAEKAAEALAAAAAABAAEAAAICTAEAOw==", ImageFormat.JPG)]
-        [DataRow(@"data:image/ico;base64,R0lGODlhAQABAAAAACH5BAEKAAEALAAAAAABAAEAAAICTAEAOw==", ImageFormat.ICO)]
-        [DataRow(@"data:image/icon;base64,R0lGODlhAQABAAAAACH5BAEKAAEALAAAAAABAAEAAAICTAEAOw==", ImageFormat.ICO)]
-        [DataRow(@"data:image/svg;base64,R0lGODlhAQABAAAAACH5BAEKAAEALAAAAAABAAEAAAICTAEAOw==", ImageFormat.SVG)]
-        public void ImageFormatType(string path, ImageFormat format)
+        [DataRow(@"data:image/png;base64,R0lGODlhAQABAAAAACH5BAEKAAEALAAAAAABAAEAAAICTAEAOw==", "PNG")]
+        [DataRow(@"data:image/gif;base64,R0lGODlhAQABAAAAACH5BAEKAAEALAAAAAABAAEAAAICTAEAOw==", "GIF")]
+        [DataRow(@"data:image/jpg;base64,R0lGODlhAQABAAAAACH5BAEKAAEALAAAAAABAAEAAAICTAEAOw==", "JPG")]
+        [DataRow(@"data:image/jpeg;base64,R0lGODlhAQABAAAAACH5BAEKAAEALAAAAAABAAEAAAICTAEAOw==", "JPEG")]
+        [DataRow(@"data:image/ico;base64,R0lGODlhAQABAAAAACH5BAEKAAEALAAAAAABAAEAAAICTAEAOw==", "ICO")]
+        [DataRow(@"data:image/svg;base64,R0lGODlhAQABAAAAACH5BAEKAAEALAAAAAABAAEAAAICTAEAOw==", "SVG")]
+        public void ImageFormatType(string path, string format)
         {
             _resolver.TryGetMatches(path, out MatchCollection matches);
 

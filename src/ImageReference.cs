@@ -20,17 +20,18 @@ namespace ImagePreview
             Span = span;
             SourceFilePath = sourceFilePath;
             RawImageString = match.Groups["image"].Value.Trim();
-            Format = match.GetImageFormat();
+            ImageFileType = match.GetImageFormat();
         }
 
         public IImageResolver Resolver { get; }
 
-        public ImageFormat Format { get; }
+        public string ImageFileType {get;}
 
         /// <summary>
         /// Gets or sets the position of the image in the source text.
         /// </summary>
         public Span Span { get; }
+
         public string SourceFilePath { get; }
 
         /// <summary>

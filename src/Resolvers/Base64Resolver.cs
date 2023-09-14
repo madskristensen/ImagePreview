@@ -8,7 +8,8 @@ namespace ImagePreview.Resolvers
 {
     internal class Base64Resolver : IImageResolver
     {
-        private static readonly Regex _regex = new(@"data:image/(?<ext>[^;]+);base64,(?<image>([^\s=]+)=*)", RegexOptions.IgnoreCase | RegexOptions.Compiled);
+        private static readonly string _pattern = @"data:image/(?<ext>[^;]+);base64,(?<image>([^\s=]+)=*)";
+        private static readonly Regex _regex = new(_pattern, RegexOptions.IgnoreCase | RegexOptions.Compiled);
 
         public string DisplayName => "Base64";
 

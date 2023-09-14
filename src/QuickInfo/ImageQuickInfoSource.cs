@@ -30,7 +30,7 @@ namespace ImagePreview
         {
             TelemetryEvent tel = Telemetry.CreateEvent("showpreview");
             tel.Properties["resolver"] = reference?.Resolver?.DisplayName;
-            tel.Properties["format"] = reference?.Format;
+            tel.Properties["format"] = reference?.ImageFileType ?? "Unknown";
             tel.Properties["filetype"] = Path.GetExtension(reference?.SourceFilePath ?? "").ToLowerInvariant();
             tel.Properties["success"] = false;
 

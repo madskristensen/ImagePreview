@@ -33,7 +33,7 @@ namespace ImagePreview.QuickInfo
 
             bool isAbsoluteUri = Uri.TryCreate(url, UriKind.Absolute, out Uri absoluteUri);
 
-            if (result.Format == ImageFormat.GIF && isAbsoluteUri)
+            if (result.ImageFileType == "GIF" && isAbsoluteUri)
             {
                 mediaPreview.Source = absoluteUri;
                 mediaPreview.Visibility = Visibility.Visible;

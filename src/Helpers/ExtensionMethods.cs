@@ -65,20 +65,9 @@ namespace ImagePreview
             return null;
         }
 
-        public static ImageFormat GetImageFormat(this Match match)
+        public static string GetImageFormat(this Match match)
         {
-            return match.Groups["ext"]?.Value?.TrimStart('.').ToLowerInvariant() switch
-            {
-                "gif" => ImageFormat.GIF,
-                "png" => ImageFormat.PNG,
-                "jpg" or "jpeg" => ImageFormat.JPG,
-                "ico" or "icon" => ImageFormat.ICO,
-                "svg" => ImageFormat.SVG,
-                "tif" or "tiff" => ImageFormat.TIFF,
-                "bmp" => ImageFormat.BMP,
-                "wmp" => ImageFormat.WMP,
-                _ => ImageFormat.Unknown
-            };
+            return match.Groups["ext"]?.Value?.TrimStart('.').ToUpperInvariant();
         }
 
         // From https://stackoverflow.com/a/14488941

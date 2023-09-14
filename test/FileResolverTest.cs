@@ -55,18 +55,18 @@ namespace ImagePreview.Test
         }
 
         [DataTestMethod]
-        [DataRow(@"c:\test.png", ImageFormat.PNG)]
-        [DataRow(@"test.png", ImageFormat.PNG)]
-        [DataRow(@"foo \test.png bar", ImageFormat.PNG)]
-        [DataRow(@"test.svg", ImageFormat.SVG)]
-        [DataRow(@"test.ico", ImageFormat.ICO)]
-        [DataRow(@"test.jpg", ImageFormat.JPG)]
-        [DataRow(@"test.jpeg", ImageFormat.JPG)]
-        [DataRow(@"test.gif", ImageFormat.GIF)]
-        [DataRow(@"test.tif", ImageFormat.TIFF)]
-        [DataRow(@"test.bmp", ImageFormat.BMP)]
-        [DataRow(@"test.wmp", ImageFormat.WMP)]
-        public void ImageFormatType(string path, ImageFormat format)
+        [DataRow(@"c:\test.png", "PNG")]
+        [DataRow(@"test.png", "PNG")]
+        [DataRow(@"foo \test.png bar", "PNG")]
+        [DataRow(@"test.svg", "SVG")]
+        [DataRow(@"test.ico", "ICO")]
+        [DataRow(@"test.jpg", "JPG")]
+        [DataRow(@"test.jpeg", "JPEG")]
+        [DataRow(@"test.gif", "GIF")]
+        [DataRow(@"test.tif", "TIF")]
+        [DataRow(@"test.bmp", "BMP")]
+        [DataRow(@"test.wmp", "WMP")]
+        public void ImageFormatType(string path, string format)
         {
             _resolver.TryGetMatches(path, out MatchCollection matches);
 

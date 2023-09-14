@@ -4,12 +4,14 @@ using System.Text.RegularExpressions;
 using System.Threading.Tasks;
 using System.Windows.Media.Imaging;
 using EnvDTE;
+using WpfApplication1.Classes;
 
 namespace ImagePreview.Resolvers
 {
     internal class PackResolver : IImageResolver
     {
-        private static readonly Regex _regex = new(@"(pack://application:[^/]+)?/[\w]+;component/(?<image>[^""]+\.(?<ext>png|gif|jpg|jpeg|ico|tif|bmp|wmp))\b", RegexOptions.IgnoreCase | RegexOptions.Compiled);
+        private static readonly string _pattern = $@"(pack://application:[^/]+)?/[\w]+;component/(?<image>[^""]+\.(?<ext>{BitmapImageCheck.Instance.AllSupportedExtensionsString}))\b";
+        private static readonly Regex _regex = new(_pattern, RegexOptions.IgnoreCase | RegexOptions.Compiled);
 
         public string DisplayName => "Pack URI";
 
