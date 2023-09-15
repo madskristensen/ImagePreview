@@ -9,7 +9,7 @@ namespace ImagePreview.Test
     public class PackResolverTest
     {
         private PackResolver _resolver;
-        private readonly DirectoryInfo _folder = new DirectoryInfo("../../Images/");
+
 
         [TestInitialize]
         public void Setup()
