@@ -1,6 +1,5 @@
 ﻿// Class adapted from: http://james-ramsden.com/get-file-types-supported-by-bitmapimage/
 using System.Collections.Generic;
-using System.ComponentModel;
 using System.Linq;
 using Microsoft.Win32;
 
@@ -23,7 +22,7 @@ namespace WpfApplication1.Classes
         }
 
         public static BitmapImageCheck Instance { get; } = new();
-        
+
         #region properties
         /// <summary>
         /// File extensions that are supported by decoders found elsewhere on the system

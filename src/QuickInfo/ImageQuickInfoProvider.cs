@@ -8,7 +8,6 @@ namespace ImagePreview
     [Export(typeof(IAsyncQuickInfoSourceProvider))]
     [Name(nameof(ImageQuickInfoProvider))]
     [ContentType("text")]
-    [Order]
     internal class ImageQuickInfoProvider : IAsyncQuickInfoSourceProvider
     {
         public IAsyncQuickInfoSource TryCreateQuickInfoSource(ITextBuffer textBuffer)

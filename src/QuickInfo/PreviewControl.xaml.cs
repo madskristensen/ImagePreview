@@ -1,30 +1,30 @@
-﻿using System.Windows;
+﻿using System.IO;
+using System.Windows;
 using System.Windows.Controls;
 using System.Windows.Input;
 using System.Windows.Media.Imaging;
 using Microsoft.VisualStudio.PlatformUI;
+using Microsoft.VisualStudio.Telemetry;
 
 namespace ImagePreview.QuickInfo
 {
     /// <summary>
     /// Interaction logic for PreviewControl.xaml
     /// </summary>
-    public partial class PreviewControl : UserControl, IDisposable
+    public partial class PreviewControl : UserControl
     {
+        private ImageReference _imageReference;
+
         public PreviewControl()
         {
             InitializeComponent();
-
             lblSize.SetResourceReference(TextBlock.ForegroundProperty, EnvironmentColors.ComboBoxFocusedTextBrushKey);
-        }
-
-        public void Dispose()
-        {
-            throw new NotImplementedException();
         }
 
         public bool SetImage(BitmapSource bitmap, ImageReference result, string url)
         {
+            _imageReference = result;
+
             if (bitmap == null)
             {
                 lblSize.Content = "Could not resolve image for preview";
@@ -59,7 +59,15 @@ namespace ImagePreview.QuickInfo
             {
                 element.Cursor = Cursors.Hand;
                 element.ToolTip = "Click to open image in default application";
-                element.MouseUp += (s, e) => { System.Diagnostics.Process.Start(absoluteUri.OriginalString); };
+                element.MouseUp += (s, e) =>
+                {
+                    TelemetryEvent tel = Telemetry.CreateEvent("click_image");
+                    tel.Properties["resolver"] = _imageReference?.Resolver?.DisplayName;
+                    tel.Properties["format"] = _imageReference?.ImageFileType ?? "Unknown";
+                    tel.Properties["filetype"] = Path.GetExtension(_imageReference?.SourceFilePath ?? "").ToLowerInvariant();
+                    Telemetry.TrackEvent(tel);
+                    System.Diagnostics.Process.Start(absoluteUri.OriginalString);
+                };
             }
         }
     }
