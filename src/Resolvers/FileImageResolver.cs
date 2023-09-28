@@ -1,4 +1,5 @@
 ﻿using System.IO;
+using System.Linq;
 using System.Net.Cache;
 using System.Text.RegularExpressions;
 using System.Threading.Tasks;
@@ -36,25 +37,33 @@ namespace ImagePreview.Resolvers
 
             if (!isAbsolute)
             {
+                // Find relative to source file
+                string sourceDir = Path.GetDirectoryName(reference.SourceFilePath);
+                absolute = Path.GetFullPath(Path.Combine(sourceDir, rawFilePath.TrimStart('/')));
+
+                if (File.Exists(absolute))
+                {
+                    return absolute;
+                }
+
+                // Search all folders in the project
                 await ThreadHelper.JoinableTaskFactory.SwitchToMainThreadAsync();
                 DTE dte = await VS.GetRequiredServiceAsync<DTE, DTE>();
                 ProjectItem item = dte.Solution.FindProjectItem(reference.SourceFilePath);
 
                 string projectRoot = item.ContainingProject?.GetRootFolder();
+
+                if (string.IsNullOrEmpty(projectRoot))
+                {
+                    return null;
+                }
+
                 absolute = Path.GetFullPath(Path.Combine(projectRoot, rawFilePath.TrimStart('/')));
 
                 if (!File.Exists(absolute))
                 {
-                    string[] appRoots = new[] { "wwwroot", "app", "dist", "public" };
-
-                    foreach (string appRoot in appRoots)
-                    {
-                        absolute = Path.GetFullPath(Path.Combine(projectRoot, appRoot, rawFilePath.TrimStart('/')));
-                        if (File.Exists(absolute))
-                        {
-                            break;
-                        }
-                    }
+                    string fileName = rawFilePath.TrimStart('.', '/', '\\').Replace("/", "\\");
+                    TryFindFile(fileName, projectRoot, out absolute);
                 }
             }
             else
@@ -63,6 +72,33 @@ namespace ImagePreview.Resolvers
             }
 
             return absolute;
+        }
+
+        internal bool TryFindFile(string searchPattern, string startDirectory, out string result)
+        {
+            string fileName = Path.GetFileName(searchPattern);
+            result = Directory.EnumerateFiles(startDirectory, fileName, SearchOption.TopDirectoryOnly)
+                              .FirstOrDefault(f => f.IndexOf(searchPattern, StringComparison.OrdinalIgnoreCase) > -1);
+
+            if (!string.IsNullOrEmpty(result))
+            {
+                return true;
+            }
+
+            foreach (string directory in Directory.EnumerateDirectories(startDirectory))
+            {
+                if (directory.Contains("node_modules"))
+                {
+                    continue;
+                }
+
+                if (TryFindFile(searchPattern, directory, out result))
+                {
+                    return true;
+                }
+            }
+
+            return false;
         }
 
         public async Task<BitmapSource> GetBitmapAsync(ImageReference result)
