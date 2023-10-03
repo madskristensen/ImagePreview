@@ -39,7 +39,7 @@ namespace ImagePreview.Resolvers
             {
                 // Find relative to source file
                 string sourceDir = Path.GetDirectoryName(reference.SourceFilePath);
-                absolute = Path.GetFullPath(Path.Combine(sourceDir, rawFilePath.TrimStart('/')));
+                absolute = Path.GetFullPath(Path.Combine(sourceDir, rawFilePath.TrimStart('/', '\\')));
 
                 if (File.Exists(absolute))
                 {
@@ -51,19 +51,19 @@ namespace ImagePreview.Resolvers
                 DTE dte = await VS.GetRequiredServiceAsync<DTE, DTE>();
                 ProjectItem item = dte.Solution.FindProjectItem(reference.SourceFilePath);
 
-                string projectRoot = item.ContainingProject?.GetRootFolder();
+                string parentDir = item.ContainingProject?.GetRootFolder() ?? Path.GetDirectoryName(sourceDir);
 
-                if (string.IsNullOrEmpty(projectRoot))
+                if (string.IsNullOrEmpty(parentDir))
                 {
                     return null;
                 }
 
-                absolute = Path.GetFullPath(Path.Combine(projectRoot, rawFilePath.TrimStart('/')));
+                absolute = Path.GetFullPath(Path.Combine(parentDir, rawFilePath.TrimStart('/')));
 
                 if (!File.Exists(absolute))
                 {
                     string fileName = rawFilePath.TrimStart('.', '/', '\\').Replace("/", "\\");
-                    TryFindFile(fileName, projectRoot, out absolute);
+                    TryFindFile(fileName, parentDir, out absolute);
                 }
             }
             else

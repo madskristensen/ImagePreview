@@ -13,6 +13,7 @@ namespace ImagePreview
 
         public static void TrackEvent(TelemetryEvent telemetryEvent)
         {
+            telemetryEvent.Properties["version"] = Vsix.Version;
             TelemetryService.DefaultSession.PostEvent(telemetryEvent);
         }
 
