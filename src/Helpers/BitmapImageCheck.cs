@@ -68,7 +68,7 @@ namespace WpfApplication1.Classes
         private void recalculateExtensions()
         {
             CustomSupportedExtensions = GetSupportedExtensions().ToArray();
-            NativeSupportedExtensions = new string[] { ".BMP", ".GIF", ".ICO", ".JPEG", ".PNG", ".TIF", ".TIFF", ".DDS", ".JPG", ".JXR", ".HDP", ".WDP", ".SVG", ".WMP" };
+            NativeSupportedExtensions = new string[] { ".BMP", ".GIF", ".ICO", ".JPEG", ".PNG", ".TIF", ".TIFF", ".DDS", ".JPG", ".JXR", ".HDP", ".WDP", ".SVG", ".WMP", ".WEBP" };
 
             string[] cse = CustomSupportedExtensions;
             string[] nse = NativeSupportedExtensions;
