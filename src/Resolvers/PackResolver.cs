@@ -10,7 +10,7 @@ namespace ImagePreview.Resolvers
 {
     internal class PackResolver : IImageResolver
     {
-        private static readonly string _pattern = $@"(pack://application:[^/]+)?/[\w]+;component/(?<image>[^""]+\.(?<ext>{BitmapImageCheck.Instance.AllSupportedExtensionsString}))\b";
+        private static readonly string _pattern = $@"(pack://application:[^/]+)?/[\w.]+;component/(?<image>[^""]+\.(?<ext>{BitmapImageCheck.Instance.AllSupportedExtensionsString}))\b";
         private static readonly Regex _regex = new(_pattern, RegexOptions.IgnoreCase | RegexOptions.Compiled);
 
         public string DisplayName => "Pack URI";
