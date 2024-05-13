@@ -19,6 +19,8 @@ namespace ImagePreview.Test
 
         [DataTestMethod]
         [DataRow("/MyAssembly;component/foo.png", "foo.png")]
+        [DataRow("/MyAssembly.Second;component/foo.png", "foo.png")]
+        [DataRow("/MyAssembly.Second.Third;component/foo.png", "foo.png")]
         [DataRow("/MyAssembly;component/bar/foo.png", "bar/foo.png")]
         [DataRow("\"/MyAssembly;component/bar/foo.png\"", "bar/foo.png")]
         public void Short(string path, string match)
@@ -31,6 +33,8 @@ namespace ImagePreview.Test
 
         [DataTestMethod]
         [DataRow("pack://application:,,,/MyAssembly;component/foo.png", @"foo.png")]
+        [DataRow("pack://application:,,,/MyAssembly.Second;component/foo.png", @"foo.png")]
+        [DataRow("pack://application:,,,/MyAssembly.Second.Third;component/foo.png", @"foo.png")]
         [DataRow("pack://application:,,,/MyAssembly;component/bar/foo.png", @"bar/foo.png")]
         [DataRow("\"pack://application:,,,/MyAssembly;component/bar/foo.png\"", @"bar/foo.png")]
         public void Long(string path, string match)
