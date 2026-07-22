@@ -48,7 +48,7 @@ jobs:
       run: vstest.console.exe \_built\*Test.dll
 
     - name: Upload artifact
-      uses: actions/upload-artifact@v3
+      uses: actions/upload-artifact@v4
       with:
         name: ${{ github.event.repository.name }}.vsix
         path: /_built/**/*.vsix
@@ -62,7 +62,7 @@ jobs:
       - uses: actions/checkout@v3
 
       - name: Download Package artifact
-        uses: actions/download-artifact@v3
+        uses: actions/download-artifact@v4
         with:
           name: ${{ github.event.repository.name }}.vsix
 
