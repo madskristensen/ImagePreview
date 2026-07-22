@@ -1,8 +1,10 @@
-﻿using System.IO;
+using System.Collections.Generic;
+using System.IO;
 using System.Threading;
 using System.Threading.Tasks;
 using System.Windows.Media.Imaging;
 using ImagePreview.QuickInfo;
+using ImagePreview.Resolvers;
 using Microsoft.VisualStudio.Language.Intellisense;
 using Microsoft.VisualStudio.Telemetry;
 using Microsoft.VisualStudio.Text;
@@ -13,6 +15,14 @@ namespace ImagePreview
     {
         private readonly ITextBuffer _textBuffer;
         private static readonly RatingPrompt _prompt = new("MadsKristensen.ImagePreview", Vsix.Name, General.Instance);
+
+        public static IReadOnlyList<IImageResolver> Resolvers { get; } = new List<IImageResolver>
+        {
+            new Base64Resolver(),
+            new PackResolver(),
+            new HttpImageResolver(),
+            new FileImageResolver(),
+        };
 
         public ImageQuickInfoSource(ITextBuffer textBuffer)
         {

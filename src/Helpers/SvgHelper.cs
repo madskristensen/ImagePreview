@@ -33,7 +33,13 @@ namespace ImagePreview.Helpers
                     return null;
                 }
 
-                Size size = CalculateDimensions(new Size(svg.Width.Value, svg.Height.Value));
+                System.Drawing.SizeF svgDimensions = svg.GetDimensions();
+                if (svgDimensions.Width <= 0 || svgDimensions.Height <= 0)
+                {
+                    return null;
+                }
+
+                Size size = CalculateDimensions(new Size(svgDimensions.Width, svgDimensions.Height));
 
                 using (System.Drawing.Bitmap bmp = svg.Draw((int)size.Width, (int)size.Height))
                 using (MemoryStream ms = new())

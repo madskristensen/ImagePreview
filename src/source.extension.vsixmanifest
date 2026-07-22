@@ -1,10 +1,10 @@
 <?xml version="1.0" encoding="utf-8"?>
 <PackageManifest Version="2.0.0" xmlns="http://schemas.microsoft.com/developer/vsx-schema/2011" xmlns:d="http://schemas.microsoft.com/developer/vsx-schema-design/2011">
     <Metadata>
-        <Identity Id="ImagePreview.3e89687a-7648-400e-aff7-a4fd71fd0f5c" Version="1.0.1002" Language="en-US" Publisher="Mads Kristensen" />
-        <DisplayName>Image Preview</DisplayName>
-        <Description xml:space="preserve">Shows an image preview when the mouse hovers over any URL or file path string anywhere in any text file.</Description>
-        <MoreInfo>https://github.com/madskristensen/ImagePreview</MoreInfo>
+        <Identity Id="ImagePreview.3e89687a-7648-400e-aff7-a4fd71fd0f5c" Version="1.0.1003" Language="en-US" Publisher="Mads Kristensen" />
+        <DisplayName>Image Preview (fixed svg preview)</DisplayName>
+        <Description xml:space="preserve">Shows an image preview when hovering over URLs and file paths. Includes fix for SVG preview issue (temporary patch build).</Description>
+        <MoreInfo>https://github.com/sdoiel/ImagePreview</MoreInfo>
         <License>Resources\LICENSE</License>
         <Icon>Resources\Icon.png</Icon>
         <PreviewImage>Resources\Icon.png</PreviewImage>
@@ -24,5 +24,12 @@
     <Assets>
         <Asset Type="Microsoft.VisualStudio.VsPackage" d:Source="Project" d:ProjectName="%CurrentProject%" Path="|%CurrentProject%;PkgdefProjectOutputGroup|" />
         <Asset Type="Microsoft.VisualStudio.MefComponent" d:Source="Project" d:ProjectName="%CurrentProject%" Path="|%CurrentProject%|" />
+        <Asset Type="Microsoft.VisualStudio.Assembly" d:Source="File" Path="Svg.dll" />
+        <Asset Type="Microsoft.VisualStudio.Assembly" d:Source="File" Path="ExCSS.dll" />
+        <Asset Type="Microsoft.VisualStudio.Assembly" d:Source="File" Path="Fizzler.dll" />
+        <Asset Type="Microsoft.VisualStudio.Assembly" d:Source="File" Path="System.Buffers.dll" />
+        <Asset Type="Microsoft.VisualStudio.Assembly" d:Source="File" Path="System.Memory.dll" />
+        <Asset Type="Microsoft.VisualStudio.Assembly" d:Source="File" Path="System.Numerics.Vectors.dll" />
+        <Asset Type="Microsoft.VisualStudio.Assembly" d:Source="File" Path="System.Runtime.CompilerServices.Unsafe.dll" />
     </Assets>
 </PackageManifest>

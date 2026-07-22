@@ -11,13 +11,7 @@ namespace ImagePreview
     {
         private static readonly string[] _sizeSuffixes = new[] { "bytes", "KB", "MB", "GB", "TB", "PB", "EB", "ZB", "YB" };
 
-        private static readonly List<IImageResolver> _resolvers = new()
-        {
-            new Base64Resolver(),
-            new PackResolver(),
-            new HttpImageResolver(),
-            new FileImageResolver(),
-        };
+        private static readonly IReadOnlyList<IImageResolver> _resolvers = ImageQuickInfoSource.Resolvers;
 
         /// <summary>
         /// Finds image references in the given text under the specified trigger point.
